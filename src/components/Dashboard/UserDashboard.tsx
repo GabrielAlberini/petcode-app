@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, ExternalLink, Edit, QrCode, Heart, Phone, Save, X, Package, Truck, CheckCircle, XCircle, Clock, AlertTriangle, Search, Megaphone, MapPin, Menu, User, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { getClientPets, getClientOrders, updateOrderAddress, togglePetLostStatus, migrateExistingPets, migratePetUrls, updatePetProfile } from '../../services/firestoreService';
+import { getClientPets, getClientOrders, updateOrderAddress, togglePetLostStatus, updatePetProfile } from '../../services/firestoreService';
 import { getStatusColor, getStatusText, formatDate } from '../../utils/profileUtils';
 import { PetProfile, QROrder } from '../../types';
 import EditPetForm from './EditPetForm';
@@ -18,8 +18,6 @@ const UserDashboard: React.FC = () => {
   const [postalCodeInput, setPostalCodeInput] = useState<string>('');
   const [countryInput, setCountryInput] = useState<string>('');
   const [isUpdatingLostStatus, setIsUpdatingLostStatus] = useState(false);
-  const [migrationCompleted, setMigrationCompleted] = useState(false);
-  const [urlMigrationCompleted, setUrlMigrationCompleted] = useState(false);
   const [editingPet, setEditingPet] = useState<PetProfile | null>(null);
   const [editingOwnerMessage, setEditingOwnerMessage] = useState<{ [key: string]: string }>({});
   const [isSavingMessage, setIsSavingMessage] = useState(false);
@@ -34,17 +32,6 @@ const UserDashboard: React.FC = () => {
       }
 
       try {
-        // Run migrations once
-        if (!migrationCompleted) {
-          await migrateExistingPets();
-          setMigrationCompleted(true);
-        }
-
-        if (!urlMigrationCompleted) {
-          await migratePetUrls();
-          setUrlMigrationCompleted(true);
-        }
-
         const [petsData, ordersData] = await Promise.all([
           getClientPets(currentClient.id),
           getClientOrders(currentClient.id)
@@ -59,7 +46,7 @@ const UserDashboard: React.FC = () => {
       }
     };
     loadData();
-  }, [currentClient, migrationCompleted, urlMigrationCompleted]);
+  }, [currentClient]);
 
   const handleLogout = async () => {
     try {
