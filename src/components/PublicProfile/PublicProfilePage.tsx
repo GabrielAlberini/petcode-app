@@ -180,15 +180,6 @@ const PublicProfilePage: React.FC = () => {
           </button>
         </div>
 
-        {/* Instrucciones */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-          <h4 className="font-semibold text-blue-900 mb-2">¿Encontraste esta mascota?</h4>
-          <p className="text-sm text-blue-800">
-            Llama al número de arriba para contactar directamente con el dueño.
-            Mantén a la mascota segura hasta que llegue la ayuda.
-          </p>
-        </div>
-
         {/* Footer */}
         <div className="text-center mt-6">
           <div className="flex items-center justify-center space-x-2 text-gray-400">

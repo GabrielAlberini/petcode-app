@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Eye, Package, Truck, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { Download, Eye, Package, Truck, CheckCircle, XCircle, ChevronDown, Menu, ArrowLeft, Shield, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus } from '../../services/firestoreService';
 import { getStatusColor, getStatusText, formatDate } from '../../utils/profileUtils';
 import { QROrder } from '../../types';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AdminDashboard: React.FC = () => {
+  const { logout } = useAuth();
   const [orders, setOrders] = useState<QROrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<QROrder | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [updatingStatus, setUpdatingStatus] = useState<string | null>(null);
-
+  const [showMenu, setShowMenu] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadOrders();
@@ -40,18 +44,33 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   const downloadQR = (order: QROrder) => {
-    const canvas = document.getElementById(`qr-${order.id}`) as HTMLCanvasElement;
-    if (canvas) {
-      const url = canvas.toDataURL('image/png');
+    const element = document.getElementById(`qr-${order.id}`);
+    if (element && element instanceof SVGElement) {
+      // Convertir SVG a string
+      const svgData = new XMLSerializer().serializeToString(element);
+      const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      // Crear enlace de descarga
       const a = document.createElement('a');
       a.href = url;
-      a.download = `qr-${order.petName.toLowerCase().replace(/\s+/g, '-')}.png`;
+      a.download = `qr-${order.petName.toLowerCase().replace(/\s+/g, '-')}.svg`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+
+      // Limpiar URL
+      URL.revokeObjectURL(url);
     }
   };
 
@@ -78,74 +97,108 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Header */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-poppins">Panel de Administración</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">Gestiona pedidos de códigos QR y actualiza estados</p>
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => navigate('/')}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+              <div className="flex items-center space-x-3">
+                <div className="bg-gradient-to-r from-red-500 to-red-600 p-2 rounded-lg">
+                  <Shield className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-gray-900 font-poppins">Panel Admin</h1>
+                  <p className="text-xs text-gray-500">Gestiona pedidos de códigos QR</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
         </div>
 
+        {/* Mobile Menu */}
+        {showMenu && (
+          <div className="border-t border-gray-200 bg-white">
+            <div className="px-4 py-3">
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-3 w-full px-3 py-2 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Cerrar sesión</span>
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Main Content */}
+      <div className="px-4 py-6">
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center">
-              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-gray-500" />
-              <div className="ml-2 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-500">Total</p>
-                <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.total}</p>
+              <Package className="h-6 w-6 text-gray-500" />
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-500">Total</p>
+                <p className="text-xl font-bold text-gray-900">{stats.total}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center">
-              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-yellow-500" />
-              <div className="ml-2 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-500">Pendiente</p>
-                <p className="text-lg sm:text-2xl font-bold text-yellow-600">{stats.pendiente}</p>
+              <Package className="h-6 w-6 text-yellow-500" />
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-500">Pendiente</p>
+                <p className="text-xl font-bold text-yellow-600">{stats.pendiente}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center">
-              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-blue-500" />
-              <div className="ml-2 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-500">Impreso</p>
-                <p className="text-lg sm:text-2xl font-bold text-blue-600">{stats.impreso}</p>
+              <Package className="h-6 w-6 text-blue-500" />
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-500">Impreso</p>
+                <p className="text-xl font-bold text-blue-600">{stats.impreso}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
             <div className="flex items-center">
-              <Truck className="h-5 w-5 sm:h-8 sm:w-8 text-green-500" />
-              <div className="ml-2 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-500">Enviado</p>
-                <p className="text-lg sm:text-2xl font-bold text-green-600">{stats.enviado}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
-            <div className="flex items-center">
-              <XCircle className="h-5 w-5 sm:h-8 sm:w-8 text-red-500" />
-              <div className="ml-2 sm:ml-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-500">Cancelado</p>
-                <p className="text-lg sm:text-2xl font-bold text-red-600">{stats.cancelado}</p>
+              <Truck className="h-6 w-6 text-green-500" />
+              <div className="ml-3">
+                <p className="text-xs font-medium text-gray-500">Enviado</p>
+                <p className="text-xl font-bold text-green-600">{stats.enviado}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-4 sm:mb-6">
+        <div className="mb-6">
           <div className="flex flex-wrap gap-2">
             {['all', 'pendiente', 'impreso', 'enviado', 'cancelado'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${filter === status
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${filter === status
                   ? 'bg-hope-green-500 text-white'
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
                   }`}
@@ -156,168 +209,133 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Orders Table */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-              Pedidos de Códigos QR ({filteredOrders.length})
-            </h2>
-          </div>
+        {/* Orders */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Pedidos ({filteredOrders.length})
+          </h3>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Mascota
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Cliente
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+          {filteredOrders.length === 0 ? (
+            <div className="bg-white rounded-xl p-8 text-center shadow-sm">
+              <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+              <h4 className="text-lg font-medium text-gray-900 mb-2">No hay pedidos</h4>
+              <p className="text-gray-600">No se encontraron pedidos con el filtro seleccionado</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredOrders.map((order) => (
+                <div key={order.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-xs sm:text-sm font-medium text-gray-900">{order.petName}</div>
-                        <div className="text-xs sm:text-sm text-gray-500">ID: {order.petProfileId.slice(-8)}</div>
+                        <h4 className="font-medium text-gray-900">{order.petName}</h4>
+                        <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
                       </div>
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-xs sm:text-sm font-medium text-gray-900">
-                          {order.clientFirstName} {order.clientLastName}
-                        </div>
-                        <div className="text-xs sm:text-sm text-gray-500">{order.clientEmail}</div>
-                        <div className="text-xs sm:text-sm text-gray-500">{order.clientPhone}</div>
-                        <div className="text-xs sm:text-sm text-gray-500 mt-1">
-                          <span className="text-gray-600">
-                            {order.clientAddress}, {order.clientCity}, {order.clientPostalCode}, {order.clientCountry}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
                         {getStatusText(order.status)}
                       </span>
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
-                      {formatDate(order.createdAt)}
-                    </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => setSelectedOrder(order)}
-                          className="text-soft-blue-600 hover:text-soft-blue-900"
-                          title="Ver detalles"
+                    </div>
+
+                    <div className="text-sm text-gray-600 space-y-1 mb-3">
+                      <p><strong>Cliente:</strong> {order.clientFirstName} {order.clientLastName}</p>
+                      <p><strong>Email:</strong> {order.clientEmail}</p>
+                      <p><strong>Teléfono:</strong> {order.clientPhone}</p>
+                      <p><strong>Pedido:</strong> #{order.id?.slice(-8)}</p>
+                    </div>
+
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="flex-1 flex items-center justify-center space-x-2 py-2 px-3 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors"
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span>Ver Detalles</span>
+                      </button>
+
+                      <div className="relative">
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusUpdate(order.id!, e.target.value as QROrder['status'])}
+                          disabled={updatingStatus === order.id}
+                          className={`appearance-none bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                            }`}
                         >
-                          <Eye className="h-4 w-4" />
-                        </button>
-
-                        {/* Status Selector */}
-                        <div className="relative">
-                          <select
-                            value={order.status}
-                            onChange={(e) => handleStatusUpdate(order.id!, e.target.value as QROrder['status'])}
-                            disabled={updatingStatus === order.id}
-                            className={`appearance-none bg-white border border-gray-300 rounded-md px-2 sm:px-3 py-1 pr-6 sm:pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'
-                              }`}
-                          >
-                            <option value="pendiente">Pendiente</option>
-                            <option value="impreso">Impreso</option>
-                            <option value="enviado">Enviado</option>
-                            <option value="cancelado">Cancelado</option>
-                          </select>
-                          <ChevronDown className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                        </div>
+                          <option value="pendiente">Pendiente</option>
+                          <option value="impreso">Impreso</option>
+                          <option value="enviado">Enviado</option>
+                          <option value="cancelado">Cancelado</option>
+                        </select>
+                        <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Order Detail Modal */}
-        {selectedOrder && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-              <div className="mt-3">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-gray-900">Detalles del Pedido</h3>
-                  <button
-                    onClick={() => setSelectedOrder(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <XCircle className="h-6 w-6" />
-                  </button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-medium text-gray-900">{selectedOrder.petName}</h4>
-                    <p className="text-sm text-gray-600">
-                      {selectedOrder.clientFirstName} {selectedOrder.clientLastName}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-gray-700 mb-2">Dirección de envío:</h5>
-                    <p className="text-sm text-gray-600">
-                      {selectedOrder.clientAddress}, {selectedOrder.clientCity}, {selectedOrder.clientPostalCode}, {selectedOrder.clientCountry}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-gray-700 mb-2">Código QR:</h5>
-                    <div className="flex justify-center">
-                      <QRCodeSVG
-                        id={`qr-${selectedOrder.id}`}
-                        value={`${window.location.origin}/mascota/${selectedOrder.profileUrl}`}
-                        size={200}
-                        level="M"
-                      />
                     </div>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => downloadQR(selectedOrder)}
-                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-soft-blue-500 text-white rounded-md hover:bg-soft-blue-600 transition-colors"
-                    >
-                      <Download className="h-4 w-4" />
-                      <span>Descargar QR</span>
-                    </button>
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Detalles del Pedido</h3>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  <XCircle className="h-5 w-5" />
+                </button>
+              </div>
 
-                    <a
-                      href={`/mascota/${selectedOrder.profileUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-hope-green-500 text-white rounded-md hover:bg-hope-green-600 transition-colors"
-                    >
-                      <Eye className="h-4 w-4" />
-                      <span>Ver Perfil</span>
-                    </a>
+              <div className="space-y-4">
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-2">{selectedOrder.petName}</h4>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p><strong>Cliente:</strong> {selectedOrder.clientFirstName} {selectedOrder.clientLastName}</p>
+                    <p><strong>Email:</strong> {selectedOrder.clientEmail}</p>
+                    <p><strong>Teléfono:</strong> {selectedOrder.clientPhone}</p>
+                    <p><strong>Pedido:</strong> #{selectedOrder.id?.slice(-8)}</p>
+                    <p><strong>Fecha:</strong> {formatDate(selectedOrder.createdAt)}</p>
+                    <p><strong>Estado:</strong> {getStatusText(selectedOrder.status)}</p>
                   </div>
+                </div>
+
+                <div>
+                  <h5 className="font-medium text-gray-900 mb-2">Dirección de Envío</h5>
+                  <div className="text-sm text-gray-600">
+                    <p>{selectedOrder.clientAddress}</p>
+                    <p>{selectedOrder.clientCity}, {selectedOrder.clientPostalCode}</p>
+                    <p>{selectedOrder.clientCountry}</p>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <h5 className="font-medium text-gray-900 mb-3">Código QR</h5>
+                  <div className="bg-white p-4 rounded-lg border border-gray-200 inline-block">
+                    <QRCodeSVG
+                      id={`qr-${selectedOrder.id}`}
+                      value={`${window.location.origin}/mascota/${selectedOrder.profileUrl}`}
+                      size={200}
+                      level="M"
+                    />
+                  </div>
+                  <button
+                    onClick={() => downloadQR(selectedOrder)}
+                    className="mt-3 flex items-center justify-center space-x-2 w-full bg-hope-green-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-hope-green-600 transition-colors"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span>Descargar QR</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
