@@ -66,7 +66,7 @@ const PublicProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-4 sm:py-8 px-4">
       <div className="max-w-md mx-auto">
         {/* Banner de Emergencia - Solo si está perdida */}
         {profile.isLost && (
@@ -83,11 +83,11 @@ const PublicProfilePage: React.FC = () => {
         )}
 
         {/* Tarjeta Principal */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 mb-6">
           {/* Foto y Nombre */}
           <div className="text-center mb-6">
             <div className="relative inline-block">
-              <div className={`w-32 h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg`}>
+              <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg`}>
                 {profile.photo ? (
                   <img
                     src={profile.photo}
@@ -96,7 +96,7 @@ const PublicProfilePage: React.FC = () => {
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <Heart className="h-12 w-12 text-gray-400" />
+                    <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
                   </div>
                 )}
               </div>
@@ -106,7 +106,7 @@ const PublicProfilePage: React.FC = () => {
                 </div>
               )}
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">{profile.petName}</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{profile.petName}</h2>
           </div>
 
           {/* Mensaje del Dueño - Solo si está perdida */}
@@ -173,9 +173,9 @@ const PublicProfilePage: React.FC = () => {
           {/* Botón de Llamada */}
           <button
             onClick={handleCall}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
           >
-            <Phone className="h-6 w-6" />
+            <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
             <span>Llamar al Dueño</span>
           </button>
         </div>

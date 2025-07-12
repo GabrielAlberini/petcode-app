@@ -186,51 +186,51 @@ const UserDashboard: React.FC = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <Heart className="h-8 w-8 text-hope-green-500" />
+                <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-hope-green-500" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Mascotas Registradas</p>
-                <p className="text-2xl font-bold text-gray-900">{pets.length}</p>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Mascotas Registradas</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{pets.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <AlertTriangle className="h-8 w-8 text-red-500" />
+                <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-red-500" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Mascotas Perdidas</p>
-                <p className="text-2xl font-bold text-red-600">{pets.filter(pet => pet.isLost).length}</p>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Mascotas Perdidas</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">{pets.filter(pet => pet.isLost).length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <QrCode className="h-8 w-8 text-soft-blue-500" />
+                <QrCode className="h-6 w-6 sm:h-8 sm:w-8 text-soft-blue-500" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Pedidos Totales</p>
-                <p className="text-2xl font-bold text-gray-900">{orders.length}</p>
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Pedidos Totales</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{orders.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <Truck className="h-8 w-8 text-green-500" />
+                <Truck className="h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
               </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">QRs Enviados</p>
-                <p className="text-2xl font-bold text-gray-900">
+              <div className="ml-3 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">QRs Enviados</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   {orders.filter(order => order.status === 'enviado').length}
                 </p>
               </div>
@@ -238,7 +238,7 @@ const UserDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
           {/* Pets Section */}
           <div className="bg-white rounded-lg shadow-sm">
             <div className="px-6 py-4 border-b border-gray-200">

@@ -50,7 +50,9 @@ const ClientProfileForm: React.FC = () => {
         // Create new client
         await createClient({
           ...data,
-          userId: currentUser.uid
+          userId: currentUser.uid,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         });
       }
 
@@ -64,17 +66,17 @@ const ClientProfileForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 font-poppins">
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 font-poppins">
                   {currentClient ? 'Editar Perfil' : 'Completar Perfil'}
                 </h1>
-                <p className="text-gray-600 mt-1">
-                  {currentClient 
+                <p className="text-sm sm:text-base text-gray-600 mt-1">
+                  {currentClient
                     ? 'Actualiza tu información personal'
                     : 'Completa tu información para crear perfiles de mascotas'
                   }
@@ -83,7 +85,7 @@ const ClientProfileForm: React.FC = () => {
               {currentClient && (
                 <button
                   onClick={() => navigate('/')}
-                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors self-start sm:self-auto"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Volver</span>
@@ -92,11 +94,11 @@ const ClientProfileForm: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-6 space-y-6">
             {/* Personal Information */}
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Información Personal</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                     Nombre *
@@ -177,7 +179,7 @@ const ClientProfileForm: React.FC = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                       Ciudad *
@@ -228,7 +230,7 @@ const ClientProfileForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-md hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center space-x-2 px-4 sm:px-6 py-2 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-md hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>

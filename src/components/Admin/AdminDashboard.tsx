@@ -78,74 +78,74 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 font-poppins">Panel de Administración</h1>
-          <p className="text-gray-600 mt-2">Gestiona pedidos de códigos QR y actualiza estados</p>
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-poppins">Panel de Administración</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">Gestiona pedidos de códigos QR y actualiza estados</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center">
-              <Package className="h-8 w-8 text-gray-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-gray-500" />
+              <div className="ml-2 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Total</p>
+                <p className="text-lg sm:text-2xl font-bold text-gray-900">{stats.total}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center">
-              <Package className="h-8 w-8 text-yellow-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Pendiente</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.pendiente}</p>
+              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-yellow-500" />
+              <div className="ml-2 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Pendiente</p>
+                <p className="text-lg sm:text-2xl font-bold text-yellow-600">{stats.pendiente}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center">
-              <Package className="h-8 w-8 text-blue-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Impreso</p>
-                <p className="text-2xl font-bold text-blue-600">{stats.impreso}</p>
+              <Package className="h-5 w-5 sm:h-8 sm:w-8 text-blue-500" />
+              <div className="ml-2 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Impreso</p>
+                <p className="text-lg sm:text-2xl font-bold text-blue-600">{stats.impreso}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center">
-              <Truck className="h-8 w-8 text-green-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Enviado</p>
-                <p className="text-2xl font-bold text-green-600">{stats.enviado}</p>
+              <Truck className="h-5 w-5 sm:h-8 sm:w-8 text-green-500" />
+              <div className="ml-2 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Enviado</p>
+                <p className="text-lg sm:text-2xl font-bold text-green-600">{stats.enviado}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-3 sm:p-6">
             <div className="flex items-center">
-              <XCircle className="h-8 w-8 text-red-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-500">Cancelado</p>
-                <p className="text-2xl font-bold text-red-600">{stats.cancelado}</p>
+              <XCircle className="h-5 w-5 sm:h-8 sm:w-8 text-red-500" />
+              <div className="ml-2 sm:ml-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-500">Cancelado</p>
+                <p className="text-lg sm:text-2xl font-bold text-red-600">{stats.cancelado}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="mb-6">
-          <div className="flex space-x-2">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-wrap gap-2">
             {['all', 'pendiente', 'impreso', 'enviado', 'cancelado'].map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${filter === status
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors ${filter === status
                   ? 'bg-hope-green-500 text-white'
                   : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300'
                   }`}
@@ -158,8 +158,8 @@ const AdminDashboard: React.FC = () => {
 
         {/* Orders Table */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900">
+          <div className="px-4 sm:px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
               Pedidos de Códigos QR ({filteredOrders.length})
             </h2>
           </div>
@@ -168,19 +168,19 @@ const AdminDashboard: React.FC = () => {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Mascota
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Cliente
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
@@ -188,35 +188,35 @@ const AdminDashboard: React.FC = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">{order.petName}</div>
-                        <div className="text-sm text-gray-500">ID: {order.petProfileId.slice(-8)}</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-900">{order.petName}</div>
+                        <div className="text-xs sm:text-sm text-gray-500">ID: {order.petProfileId.slice(-8)}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <div>
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900">
                           {order.clientFirstName} {order.clientLastName}
                         </div>
-                        <div className="text-sm text-gray-500">{order.clientEmail}</div>
-                        <div className="text-sm text-gray-500">{order.clientPhone}</div>
-                        <div className="text-sm text-gray-500 mt-1">
+                        <div className="text-xs sm:text-sm text-gray-500">{order.clientEmail}</div>
+                        <div className="text-xs sm:text-sm text-gray-500">{order.clientPhone}</div>
+                        <div className="text-xs sm:text-sm text-gray-500 mt-1">
                           <span className="text-gray-600">
                             {order.clientAddress}, {order.clientCity}, {order.clientPostalCode}, {order.clientCountry}
                           </span>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
                         {getStatusText(order.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-500">
                       {formatDate(order.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button
                           onClick={() => setSelectedOrder(order)}
@@ -232,7 +232,7 @@ const AdminDashboard: React.FC = () => {
                             value={order.status}
                             onChange={(e) => handleStatusUpdate(order.id!, e.target.value as QROrder['status'])}
                             disabled={updatingStatus === order.id}
-                            className={`appearance-none bg-white border border-gray-300 rounded-md px-3 py-1 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'
+                            className={`appearance-none bg-white border border-gray-300 rounded-md px-2 sm:px-3 py-1 pr-6 sm:pr-8 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:border-gray-400'
                               }`}
                           >
                             <option value="pendiente">Pendiente</option>
@@ -240,7 +240,7 @@ const AdminDashboard: React.FC = () => {
                             <option value="enviado">Enviado</option>
                             <option value="cancelado">Cancelado</option>
                           </select>
-                          <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
+                          <ChevronDown className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
                         </div>
                       </div>
                     </td>

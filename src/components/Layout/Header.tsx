@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, User, Shield, Heart } from 'lucide-react';
+import { LogOut, User, Shield, Heart, Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Header: React.FC = () => {
   const { currentUser, currentClient, logout } = useAuth();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -25,15 +26,18 @@ const Header: React.FC = () => {
             <div className="bg-gradient-to-r from-hope-green-500 to-soft-blue-500 p-2 rounded-lg">
               <Heart className="h-6 w-6 text-white" />
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-900 font-poppins">PetCode</h1>
               <p className="text-xs text-gray-500">Dashboard</p>
             </div>
+            <div className="sm:hidden">
+              <h1 className="text-lg font-bold text-gray-900 font-poppins">PetCode</h1>
+            </div>
           </Link>
 
-          {/* Navigation */}
+          {/* Desktop Navigation */}
           {currentUser && (
-            <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-4">
               {currentClient?.role === 'admin' && (
                 <Link
                   to="/admin"
@@ -43,7 +47,7 @@ const Header: React.FC = () => {
                   <span>Admin</span>
                 </Link>
               )}
-              
+
               <Link
                 to="/perfil"
                 className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-hope-green-600 hover:bg-gray-50 transition-colors"
@@ -57,7 +61,7 @@ const Header: React.FC = () => {
                   <p className="font-medium text-gray-900">{currentClient?.firstName || currentUser.displayName}</p>
                   <p className="text-gray-500 text-xs">{currentUser.email}</p>
                 </div>
-                
+
                 <button
                   onClick={handleLogout}
                   className="p-2 rounded-md text-gray-400 hover:text-red-600 hover:bg-gray-50 transition-colors"
@@ -68,7 +72,65 @@ const Header: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Mobile menu button */}
+          {currentUser && (
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Mobile Navigation */}
+        {currentUser && isMobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-200">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {currentClient?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-hope-green-600 hover:bg-gray-50 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>Admin</span>
+                </Link>
+              )}
+
+              <Link
+                to="/perfil"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-hope-green-600 hover:bg-gray-50 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User className="h-4 w-4" />
+                <span>Perfil</span>
+              </Link>
+
+              <div className="px-3 py-2 border-t border-gray-200 mt-2">
+                <div className="text-sm mb-2">
+                  <p className="font-medium text-gray-900">{currentClient?.firstName || currentUser.displayName}</p>
+                  <p className="text-gray-500 text-xs">{currentUser.email}</p>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-2 w-full px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-red-600 hover:bg-gray-50 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Cerrar sesión</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
