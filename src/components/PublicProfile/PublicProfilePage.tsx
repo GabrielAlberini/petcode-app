@@ -9,6 +9,7 @@ const PublicProfilePage: React.FC = () => {
   const [profile, setProfile] = useState<PublicProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -67,6 +68,16 @@ const PublicProfilePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-4 sm:py-8 px-4">
+      {/* Modal de imagen expandida */}
+      {isModalOpen && profile.photo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={() => setIsModalOpen(false)}>
+          <img
+            src={profile.photo}
+            alt={profile.petName}
+            className="max-h-[90vh] max-w-[90vw] rounded-2xl shadow-2xl border-4 border-white object-contain"
+          />
+        </div>
+      )}
       <div className="max-w-md mx-auto">
         {/* Banner de Emergencia - Solo si está perdida */}
         {profile.isLost && (
@@ -87,7 +98,7 @@ const PublicProfilePage: React.FC = () => {
           {/* Foto y Nombre */}
           <div className="text-center mb-6">
             <div className="relative inline-block">
-              <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg`}>
+              <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg cursor-pointer`} onClick={() => profile.photo && setIsModalOpen(true)}>
                 {profile.photo ? (
                   <img
                     src={profile.photo}
@@ -129,55 +140,59 @@ const PublicProfilePage: React.FC = () => {
               Información de la Mascota
             </h3>
             <div className="space-y-2">
-              <div className="flex justify-between py-2 border-b border-gray-100">
-                <span className="text-gray-600">Raza:</span>
-                <span className="font-medium">{profile.breed}</span>
+              <div className="py-2">
+                <span className="block text-gray-600">Raza:</span>
+                <span className="block font-medium">{profile.breed}</span>
               </div>
-              <div className="flex justify-between py-2 border-b border-gray-100">
-                <span className="text-gray-600">Edad:</span>
-                <span className="font-medium">{profile.age}</span>
+              <div className="py-2">
+                <span className="block text-gray-600">Edad:</span>
+                <span className="block font-medium">{profile.age}</span>
               </div>
               {profile.vaccinations && (
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Vacunas:</span>
-                  <span className="font-medium text-sm">{profile.vaccinations}</span>
+                <div className="py-2">
+                  <span className="block text-gray-600">Vacunas:</span>
+                  <span className="block font-medium text-sm break-words whitespace-pre-line">{profile.vaccinations}</span>
                 </div>
               )}
               {profile.observations && (
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Observaciones:</span>
-                  <span className="font-medium text-sm">{profile.observations}</span>
+                <div className="py-2">
+                  <span className="block text-gray-600">Observaciones médicas:</span>
+                  <span className="block font-medium text-sm break-words whitespace-pre-line">{profile.observations}</span>
                 </div>
               )}
             </div>
           </div>
 
           {/* Información de Contacto */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-              <User className="h-5 w-5 text-blue-500 mr-2" />
-              Información de Contacto
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between py-2 border-b border-gray-100">
-                <span className="text-gray-600">Dueño:</span>
-                <span className="font-medium">{profile.ownerName}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-gray-600">Teléfono:</span>
-                <span className="font-medium">{profile.contactPhone}</span>
+          {profile.isLost && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <User className="h-5 w-5 text-blue-500 mr-2" />
+                Información de Contacto
+              </h3>
+              <div className="space-y-2">
+                <div className="flex justify-between py-2 border-b border-gray-100">
+                  <span className="text-gray-600">Dueño:</span>
+                  <span className="font-medium">{profile.ownerName}</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-gray-600">Teléfono:</span>
+                  <span className="font-medium">{profile.contactPhone}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Botón de Llamada */}
-          <button
-            onClick={handleCall}
-            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
-          >
-            <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
-            <span>Llamar al Dueño</span>
-          </button>
+          {profile.isLost && (
+            <button
+              onClick={handleCall}
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+            >
+              <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span>Llamar al Dueño</span>
+            </button>
+          )}
         </div>
 
         {/* Footer */}

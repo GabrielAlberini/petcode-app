@@ -131,6 +131,19 @@ export const updatePetProfile = async (petId: string, updates: Partial<PetProfil
       ...updates,
       updatedAt: new Date().toISOString()
     });
+
+    // Si se actualiza el nombre de la mascota, actualizarlo también en los pedidos QR relacionados
+    if (updates.petName) {
+      const q = query(collection(db, 'pedidosQR'), where('petProfileId', '==', petId));
+      const querySnapshot = await getDocs(q);
+      const updatePromises = querySnapshot.docs.map(docSnap =>
+        updateDoc(docSnap.ref, {
+          petName: updates.petName,
+          updatedAt: new Date().toISOString()
+        })
+      );
+      await Promise.all(updatePromises);
+    }
   } catch (error) {
     console.error('Error updating pet profile:', error);
     throw error;

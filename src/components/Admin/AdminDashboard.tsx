@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Eye, Package, Truck, CheckCircle, XCircle, ChevronDown, Menu, ArrowLeft, Shield, LogOut } from 'lucide-react';
+import { Download, Eye, Package, Truck, CheckCircle, XCircle, ChevronDown, Menu, ArrowLeft, Shield, LogOut, Clock, User, MapPin, Mail, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus } from '../../services/firestoreService';
 import { getStatusColor, getStatusText, formatDate } from '../../utils/profileUtils';
@@ -222,50 +222,93 @@ const AdminDashboard: React.FC = () => {
               <p className="text-gray-600">No se encontraron pedidos con el filtro seleccionado</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {filteredOrders.map((order) => (
-                <div key={order.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h4 className="font-medium text-gray-900">{order.petName}</h4>
-                        <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
+                <div key={order.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                  {/* Header con estado prominente */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <div className="flex-shrink-0">
+                          {order.status === 'pendiente' && <Clock className="h-5 w-5 text-yellow-500" />}
+                          {order.status === 'impreso' && <Package className="h-5 w-5 text-blue-500" />}
+                          {order.status === 'enviado' && <Truck className="h-5 w-5 text-green-500" />}
+                          {order.status === 'cancelado' && <XCircle className="h-5 w-5 text-red-500" />}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 text-lg">{order.petName}</h4>
+                          <p className="text-sm text-gray-500 flex items-center space-x-1">
+                            <span>Pedido #{order.id?.slice(-8)}</span>
+                            <span>•</span>
+                            <span>{formatDate(order.createdAt)}</span>
+                          </p>
+                        </div>
                       </div>
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
-                        {getStatusText(order.status)}
-                      </span>
+                      <div className="flex-shrink-0">
+                        <span className={`px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(order.status)}`}>
+                          {getStatusText(order.status)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Información del cliente */}
+                  <div className="px-4 py-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-700 mb-2 flex items-center space-x-2">
+                          <User className="h-4 w-4 text-gray-500" />
+                          <span>Información del Cliente</span>
+                        </h5>
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <p><strong>{order.clientFirstName} {order.clientLastName}</strong></p>
+                          <p className="flex items-center space-x-1">
+                            <Mail className="h-3 w-3 text-gray-400" />
+                            <span>{order.clientEmail}</span>
+                          </p>
+                          <p className="flex items-center space-x-1">
+                            <Phone className="h-3 w-3 text-gray-400" />
+                            <span>{order.clientPhone}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h5 className="text-sm font-medium text-gray-700 mb-2 flex items-center space-x-2">
+                          <MapPin className="h-4 w-4 text-gray-500" />
+                          <span>Dirección de Envío</span>
+                        </h5>
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <p>{order.clientAddress || 'No especificada'}</p>
+                          <p>{order.clientCity}, {order.clientPostalCode}</p>
+                          <p>{order.clientCountry}</p>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="text-sm text-gray-600 space-y-1 mb-3">
-                      <p><strong>Cliente:</strong> {order.clientFirstName} {order.clientLastName}</p>
-                      <p><strong>Email:</strong> {order.clientEmail}</p>
-                      <p><strong>Teléfono:</strong> {order.clientPhone}</p>
-                      <p><strong>Pedido:</strong> #{order.id?.slice(-8)}</p>
-                    </div>
-
-                    <div className="flex space-x-2">
+                    {/* Acciones */}
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                       <button
                         onClick={() => setSelectedOrder(order)}
-                        className="flex-1 flex items-center justify-center space-x-2 py-2 px-3 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors"
+                        className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors border border-blue-200"
                       >
                         <Eye className="h-4 w-4" />
-                        <span>Ver Detalles</span>
+                        <span>Ver Detalles Completos</span>
                       </button>
 
-                      <div className="relative">
+                      <div className="relative flex-shrink-0">
                         <select
                           value={order.status}
                           onChange={(e) => handleStatusUpdate(order.id!, e.target.value as QROrder['status'])}
                           disabled={updatingStatus === order.id}
-                          className={`appearance-none bg-gray-100 border border-gray-300 rounded-lg px-3 py-2 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
-                            }`}
+                          className={`appearance-none bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 pr-10 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-hope-green-500 transition-colors ${updatingStatus === order.id ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
                         >
                           <option value="pendiente">Pendiente</option>
                           <option value="impreso">Impreso</option>
                           <option value="enviado">Enviado</option>
                           <option value="cancelado">Cancelado</option>
                         </select>
-                        <ChevronDown className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
+                        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                       </div>
                     </div>
                   </div>
@@ -305,11 +348,26 @@ const AdminDashboard: React.FC = () => {
                 </div>
 
                 <div>
-                  <h5 className="font-medium text-gray-900 mb-2">Dirección de Envío</h5>
-                  <div className="text-sm text-gray-600">
-                    <p>{selectedOrder.clientAddress}</p>
-                    <p>{selectedOrder.clientCity}, {selectedOrder.clientPostalCode}</p>
-                    <p>{selectedOrder.clientCountry}</p>
+                  <h5 className="font-medium text-gray-900 mb-3">Dirección de Envío</h5>
+                  <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Dirección</label>
+                      <p className="text-sm text-gray-900">{selectedOrder.clientAddress || 'No especificada'}</p>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-1">Ciudad</label>
+                      <p className="text-sm text-gray-900">{selectedOrder.clientCity || 'No especificada'}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">Código Postal</label>
+                        <p className="text-sm text-gray-900">{selectedOrder.clientPostalCode || 'No especificado'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">País</label>
+                        <p className="text-sm text-gray-900">{selectedOrder.clientCountry || 'No especificado'}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
