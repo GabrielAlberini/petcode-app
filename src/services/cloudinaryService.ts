@@ -1,13 +1,9 @@
-// Mock Cloudinary service - En producción usar la API real de Cloudinary
+// Configuración de Cloudinary
+const CLOUDINARY_CLOUD_NAME = 'dvvr2l5l1';
+
+// Servicio de Cloudinary usando la API REST
 export const uploadPetPhoto = async (file: File): Promise<{ url: string, optimizedUrl: string }> => {
   return new Promise((resolve, reject) => {
-    console.log('📸 Iniciando subida de foto:', {
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified
-    });
-
     // Validar tamaño del archivo (máximo 10MB)
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
@@ -26,24 +22,44 @@ export const uploadPetPhoto = async (file: File): Promise<{ url: string, optimiz
       return;
     }
 
-    console.log('✅ Validaciones pasadas, iniciando FileReader...');
-
+    // Convertir archivo a base64 para subida directa
     const reader = new FileReader();
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
-        console.log('📖 FileReader completado, procesando resultado...');
-        const url = e.target?.result as string;
-        console.log('✅ URL generada, longitud:', url.length);
+        const base64Data = e.target?.result as string;
 
-        // En producción, aquí subirías a Cloudinary y obtendrías URLs reales
+        // Extraer solo la parte base64 (sin el prefijo data:image/...)
+        const base64Image = base64Data.split(',')[1];
+
+        // Crear FormData para la subida
+        const formData = new FormData();
+        formData.append('file', `data:${file.type};base64,${base64Image}`);
+        formData.append('upload_preset', 'petcode'); // Usar el preset correcto
+
+        // Subir a Cloudinary usando fetch
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Imagen subida exitosamente a Cloudinary:', data.public_id);
+
+        // Generar URL optimizada
+        const optimizedUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_400,h_400,c_fill/${data.public_id}`;
+
         resolve({
-          url: url,
-          optimizedUrl: url // En producción, esto sería una URL optimizada de Cloudinary
+          url: data.secure_url,
+          optimizedUrl: optimizedUrl
         });
       } catch (error) {
-        console.error('❌ Error al procesar la imagen:', error);
-        reject(new Error(`Error al procesar la imagen: ${error instanceof Error ? error.message : 'Error desconocido'}`));
+        console.error('❌ Error al subir a Cloudinary:', error);
+        reject(new Error(`Error al subir a Cloudinary: ${error instanceof Error ? error.message : 'Error desconocido'}`));
       }
     };
 
@@ -57,8 +73,6 @@ export const uploadPetPhoto = async (file: File): Promise<{ url: string, optimiz
       reject(new Error('Lectura del archivo cancelada'));
     };
 
-    console.log('🔄 Iniciando readAsDataURL...');
-    // Usar readAsDataURL para compatibilidad móvil
     reader.readAsDataURL(file);
   });
 };

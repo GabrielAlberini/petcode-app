@@ -18,6 +18,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
   const [loading, setLoading] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>(pet.photoOptimized || pet.photo);
+  const [photoError, setPhotoError] = useState<string>('');
 
   const {
     register,
@@ -37,11 +38,44 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Limpiar errores y debug previos
+      setPhotoError('');
+
+      // Mostrar información del archivo en la UI
+      const fileInfo = `📱 Archivo: ${file.name} | Tamaño: ${(file.size / 1024 / 1024).toFixed(2)}MB | Tipo: ${file.type}`;
+
+      // Validar tamaño (máximo 10MB)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        const errorMsg = `El archivo es demasiado grande. Máximo 10MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+        setPhotoError(errorMsg);
+        return;
+      }
+
+      // Validar tipo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        const errorMsg = `Tipo de archivo no soportado: ${file.type}. Usa JPEG, PNG o WebP.`;
+        setPhotoError(errorMsg);
+        return;
+      }
+
       setPhotoFile(file);
       const reader = new FileReader();
+
       reader.onload = (e) => {
         setPhotoPreview(e.target?.result as string);
       };
+
+      reader.onerror = (error) => {
+        const errorMsg = `Error al leer el archivo: ${error instanceof Error ? error.message : 'Error de FileReader'}`;
+        setPhotoError(errorMsg);
+      };
+
+      reader.onabort = () => {
+        setPhotoError('Lectura del archivo cancelada');
+      };
+
       reader.readAsDataURL(file);
     }
   };
@@ -54,9 +88,15 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
       let photoOptimizedUrl = pet.photoOptimized;
 
       if (photoFile) {
-        const uploadResult = await uploadPetPhoto(photoFile);
-        photoUrl = uploadResult.url;
-        photoOptimizedUrl = uploadResult.optimizedUrl;
+        try {
+          const uploadResult = await uploadPetPhoto(photoFile);
+          photoUrl = uploadResult.url;
+          photoOptimizedUrl = uploadResult.optimizedUrl;
+        } catch (error) {
+          const errorMsg = `Error al subir foto: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+          setPhotoError(errorMsg);
+          // Continuar con las fotos existentes si falla la subida
+        }
       }
 
       await updatePetProfile(pet.id, {
@@ -73,7 +113,9 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
       onUpdate();
       onClose();
     } catch (error) {
-      console.error('Error updating pet profile:', error);
+      const errorMsg = `Error updating pet profile: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+      console.error(errorMsg);
+      setPhotoError(errorMsg);
     } finally {
       setLoading(false);
     }
@@ -138,13 +180,19 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
                 <div className="flex-1">
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/webp"
                     onChange={handlePhotoChange}
                     className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-hope-green-50 file:text-hope-green-700 hover:file:bg-hope-green-100"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Formatos: JPG, PNG, GIF. Máximo 5MB
+                    Formatos: JPEG, PNG, WebP. Máximo 10MB
                   </p>
+
+                  {photoError && (
+                    <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
+                      <p className="text-xs text-red-600">{photoError}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
