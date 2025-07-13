@@ -123,7 +123,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-10 mx-auto p-6 border w-full max-w-2xl shadow-2xl rounded-xl bg-white">
+      <div className="relative top-4 sm:top-10 mx-auto p-4 sm:p-6 border w-full max-w-2xl shadow-2xl rounded-xl bg-white">
         <div className="mt-3">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -132,13 +132,13 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 touch-manipulation"
             >
               <X className="h-6 w-6" />
             </button>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             {/* Pet Name (Now Editable) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -147,7 +147,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <input
                 type="text"
                 {...register('petName', { required: 'El nombre es obligatorio' })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 ${errors.petName ? 'border-red-300' : 'border-gray-300'}`}
+                className={`w-full px-3 sm:px-3 py-2 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 text-base touch-manipulation ${errors.petName ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Nombre de tu mascota"
               />
               {errors.petName && (
@@ -205,7 +205,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <input
                 type="text"
                 {...register('breed', { required: 'La raza es obligatoria' })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 ${errors.breed ? 'border-red-300' : 'border-gray-300'}`}
+                className={`w-full px-3 sm:px-3 py-2 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 text-base touch-manipulation ${errors.breed ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Ej: Golden Retriever"
               />
               {errors.breed && (
@@ -221,7 +221,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <input
                 type="text"
                 {...register('age', { required: 'La edad es obligatoria' })}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 ${errors.age ? 'border-red-300' : 'border-gray-300'}`}
+                className={`w-full px-3 sm:px-3 py-2 sm:py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 text-base touch-manipulation ${errors.age ? 'border-red-300' : 'border-gray-300'}`}
                 placeholder="Ej: 3 años"
               />
               {errors.age && (
@@ -237,7 +237,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <textarea
                 {...register('vaccinations')}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500"
+                className="w-full px-3 sm:px-3 py-2 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 text-base touch-manipulation"
                 placeholder="Lista las vacunas que tiene tu mascota..."
               />
             </div>
@@ -250,17 +250,17 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <textarea
                 {...register('observations')}
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500"
+                className="w-full px-3 sm:px-3 py-2 sm:py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500 text-base touch-manipulation"
                 placeholder="Información médica importante, alergias, tratamientos..."
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex space-x-3 pt-6">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-6">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-lg hover:from-hope-green-600 hover:to-hope-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center space-x-2"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-lg hover:from-hope-green-600 hover:to-hope-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center space-x-2 touch-manipulation"
               >
                 <Save className="h-4 w-4" />
                 <span>{loading ? 'Guardando...' : 'Guardar Cambios'}</span>
@@ -268,7 +268,7 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 touch-manipulation"
               >
                 Cancelar
               </button>

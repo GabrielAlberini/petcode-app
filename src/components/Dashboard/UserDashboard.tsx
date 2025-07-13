@@ -187,7 +187,7 @@ const UserDashboard: React.FC = () => {
             <div className="flex items-center space-x-2">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors"
+                className="p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors touch-manipulation"
                 aria-label="Menú"
               >
                 <Menu className="h-5 w-5" />
@@ -203,7 +203,7 @@ const UserDashboard: React.FC = () => {
               {currentClient?.role === 'admin' && (
                 <Link
                   to="/admin"
-                  className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors touch-manipulation"
                   onClick={() => setShowMenu(false)}
                 >
                   <Shield className="h-5 w-5" />
@@ -213,7 +213,7 @@ const UserDashboard: React.FC = () => {
 
               <Link
                 to="/perfil"
-                className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors touch-manipulation"
                 onClick={() => setShowMenu(false)}
               >
                 <User className="h-5 w-5" />
@@ -228,7 +228,7 @@ const UserDashboard: React.FC = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-3 w-full px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center space-x-3 w-full px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors touch-manipulation"
                 >
                   <LogOut className="h-5 w-5" />
                   <span className="font-medium">Cerrar sesión</span>
@@ -293,7 +293,7 @@ const UserDashboard: React.FC = () => {
         <div className="mb-6">
           <Link
             to="/mascota/nueva"
-            className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium shadow-lg hover:from-hope-green-600 hover:to-hope-green-700 transition-all duration-200 text-sm sm:text-base"
+            className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium shadow-lg hover:from-hope-green-600 hover:to-hope-green-700 transition-all duration-200 text-sm sm:text-base touch-manipulation"
           >
             <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Agregar Nueva Mascota</span>
@@ -361,7 +361,7 @@ const UserDashboard: React.FC = () => {
                         <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
                           <button
                             onClick={() => handleEditPet(pet)}
-                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors touch-manipulation"
                             aria-label="Editar mascota"
                           >
                             <Edit className="h-4 w-4" />
@@ -374,7 +374,7 @@ const UserDashboard: React.FC = () => {
                         <button
                           onClick={() => handleToggleLostStatus(pet.id, pet.isLost)}
                           disabled={isUpdatingLostStatus}
-                          className={`flex-1 flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 rounded-lg text-sm font-medium transition-colors ${pet.isLost
+                          className={`flex-1 flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 rounded-lg text-sm font-medium transition-colors touch-manipulation ${pet.isLost
                             ? 'bg-green-100 text-green-700 hover:bg-green-200'
                             : 'bg-red-100 text-red-700 hover:bg-red-200'
                             }`}
@@ -394,7 +394,7 @@ const UserDashboard: React.FC = () => {
 
                         <Link
                           to={`/mascota/${pet.profileUrl}`}
-                          className="flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors"
+                          className="flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors touch-manipulation"
                         >
                           <ExternalLink className="h-4 w-4" />
                           <span>Ver</span>
@@ -412,7 +412,7 @@ const UserDashboard: React.FC = () => {
                               </p>
                               <button
                                 onClick={() => handleEditOwnerMessage(pet.id, pet.ownerMessage || '')}
-                                className="text-xs text-red-600 hover:text-red-700 mt-1"
+                                className="text-xs text-red-600 hover:text-red-700 mt-1 touch-manipulation"
                               >
                                 {pet.ownerMessage ? 'Editar mensaje' : 'Agregar mensaje'}
                               </button>
@@ -508,7 +508,7 @@ const UserDashboard: React.FC = () => {
                       {order.status === 'pendiente' ? (
                         <button
                           onClick={() => handleEditAddress(order)}
-                          className="flex-1 flex items-center justify-center space-x-2 py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                          className="flex-1 flex items-center justify-center space-x-2 py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl touch-manipulation"
                         >
                           <Edit className="h-5 w-5" />
                           <span>Editar Dirección de Envío</span>
@@ -549,7 +549,7 @@ const UserDashboard: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">Editar Dirección de Envío</h3>
               <button
                 onClick={handleCloseAddressEdit}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors touch-manipulation"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -565,7 +565,7 @@ const UserDashboard: React.FC = () => {
                   id="address"
                   value={addressInput}
                   onChange={(e) => setAddressInput(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent touch-manipulation"
                   placeholder="Calle y número"
                 />
               </div>
@@ -579,12 +579,12 @@ const UserDashboard: React.FC = () => {
                   id="city"
                   value={cityInput}
                   onChange={(e) => setCityInput(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent touch-manipulation"
                   placeholder="Nombre de la ciudad"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
                     Código Postal
@@ -594,7 +594,7 @@ const UserDashboard: React.FC = () => {
                     id="postalCode"
                     value={postalCodeInput}
                     onChange={(e) => setPostalCodeInput(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent touch-manipulation"
                     placeholder="CP"
                   />
                 </div>
@@ -607,7 +607,7 @@ const UserDashboard: React.FC = () => {
                     id="country"
                     value={countryInput}
                     onChange={(e) => setCountryInput(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 py-3 sm:py-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent touch-manipulation"
                     placeholder="País"
                   />
                 </div>
@@ -617,14 +617,14 @@ const UserDashboard: React.FC = () => {
             <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
               <button
                 onClick={handleSaveAddress}
-                className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 bg-hope-green-500 text-white rounded-lg font-medium hover:bg-hope-green-600 transition-colors"
+                className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 bg-hope-green-500 text-white rounded-lg font-medium hover:bg-hope-green-600 transition-colors touch-manipulation"
               >
                 <Save className="h-4 w-4" />
                 <span>Guardar Dirección</span>
               </button>
               <button
                 onClick={handleCloseAddressEdit}
-                className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors"
+                className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors touch-manipulation"
               >
                 <X className="h-4 w-4" />
                 <span>Cancelar</span>
@@ -643,20 +643,20 @@ const UserDashboard: React.FC = () => {
               value={editingOwnerMessage[Object.keys(editingOwnerMessage)[0]] || ''}
               onChange={(e) => setEditingOwnerMessage(prev => ({ ...prev, [Object.keys(editingOwnerMessage)[0]]: e.target.value }))}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
               placeholder="Escribe un mensaje importante para quien encuentre tu mascota..."
             />
-            <div className="flex space-x-3 mt-4">
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 mt-4">
               <button
                 onClick={() => handleSaveOwnerMessage(Object.keys(editingOwnerMessage)[0])}
                 disabled={isSavingMessage}
-                className="flex-1 bg-hope-green-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-hope-green-600 disabled:opacity-50 transition-colors"
+                className="flex-1 bg-hope-green-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-hope-green-600 disabled:opacity-50 transition-colors touch-manipulation"
               >
                 {isSavingMessage ? 'Guardando...' : 'Guardar'}
               </button>
               <button
                 onClick={() => handleCancelEditMessage(Object.keys(editingOwnerMessage)[0])}
-                className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-600 transition-colors"
+                className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-600 transition-colors touch-manipulation"
               >
                 Cancelar
               </button>

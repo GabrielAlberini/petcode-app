@@ -98,9 +98,9 @@ const ClientProfileForm: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-6">
+      <div className="px-4 sm:px-6 py-6">
         <div className="max-w-md mx-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             {/* Personal Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-3 mb-4">
@@ -118,7 +118,7 @@ const ClientProfileForm: React.FC = () => {
                   <input
                     {...register('firstName', { required: 'El nombre es obligatorio' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Tu nombre"
                   />
                   {errors.firstName && (
@@ -133,7 +133,7 @@ const ClientProfileForm: React.FC = () => {
                   <input
                     {...register('lastName', { required: 'El apellido es obligatorio' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Tu apellido"
                   />
                   {errors.lastName && (
@@ -161,7 +161,7 @@ const ClientProfileForm: React.FC = () => {
                     {...register('email')}
                     type="email"
                     disabled
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl bg-gray-50 text-gray-500 text-base"
                   />
                 </div>
 
@@ -172,7 +172,7 @@ const ClientProfileForm: React.FC = () => {
                   <input
                     {...register('phone', { required: 'El teléfono es obligatorio' })}
                     type="tel"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Tu número de teléfono"
                   />
                   {errors.phone && (
@@ -199,7 +199,7 @@ const ClientProfileForm: React.FC = () => {
                   <input
                     {...register('address', { required: 'La dirección es obligatoria' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Calle y número"
                   />
                   {errors.address && (
@@ -214,7 +214,7 @@ const ClientProfileForm: React.FC = () => {
                   <input
                     {...register('city', { required: 'La ciudad es obligatoria' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Tu ciudad"
                   />
                   {errors.city && (
@@ -222,7 +222,7 @@ const ClientProfileForm: React.FC = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
                       Código Postal *
@@ -230,7 +230,7 @@ const ClientProfileForm: React.FC = () => {
                     <input
                       {...register('postalCode', { required: 'El código postal es obligatorio' })}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                       placeholder="CP"
                     />
                     {errors.postalCode && (
@@ -245,7 +245,7 @@ const ClientProfileForm: React.FC = () => {
                     <input
                       {...register('country', { required: 'El país es obligatorio' })}
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                      className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                       placeholder="Tu país"
                     />
                     {errors.country && (
@@ -261,7 +261,7 @@ const ClientProfileForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-xl font-medium hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-xl font-medium hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg touch-manipulation text-base"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

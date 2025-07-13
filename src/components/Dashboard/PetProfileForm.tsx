@@ -170,9 +170,9 @@ const PetProfileForm: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="px-4 py-6">
+      <div className="px-4 sm:px-6 py-6">
         <div className="max-w-md mx-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             {/* Basic Information */}
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <div className="flex items-center space-x-3 mb-4">
@@ -190,7 +190,7 @@ const PetProfileForm: React.FC = () => {
                   <input
                     {...register('petName', { required: 'El nombre es obligatorio' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Nombre de tu mascota"
                   />
                   {errors.petName && (
@@ -205,7 +205,7 @@ const PetProfileForm: React.FC = () => {
                   <input
                     {...register('breed', { required: 'La raza es obligatoria' })}
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                     placeholder="Raza de tu mascota"
                   />
                   {errors.breed && (
@@ -221,7 +221,7 @@ const PetProfileForm: React.FC = () => {
                     {...register('age', { required: 'La edad es obligatoria' })}
                     type="text"
                     placeholder="Ej: 3 años, 6 meses"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent text-base touch-manipulation"
                   />
                   {errors.age && (
                     <p className="text-red-500 text-sm mt-1">{errors.age.message}</p>
@@ -250,7 +250,7 @@ const PetProfileForm: React.FC = () => {
                       <img
                         src={photoPreview}
                         alt="Preview"
-                        className="h-32 w-32 object-cover rounded-xl mx-auto border-2 border-gray-200"
+                        className="h-24 w-24 sm:h-32 sm:w-32 object-cover rounded-xl mx-auto border-2 border-gray-200"
                       />
                       <button
                         type="button"
@@ -259,15 +259,15 @@ const PetProfileForm: React.FC = () => {
                           setPhotoPreview('');
                           setPhotoError('');
                         }}
-                        className="mt-2 text-sm text-red-600 hover:text-red-700"
+                        className="mt-2 text-sm text-red-600 hover:text-red-700 touch-manipulation"
                       >
                         Cambiar foto
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                    <label className="flex flex-col items-center justify-center w-full h-24 sm:h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer hover:bg-gray-50 transition-colors touch-manipulation">
+                      <div className="flex flex-col items-center justify-center pt-4 pb-4 sm:pt-5 sm:pb-6">
+                        <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400 mb-2" />
                         <p className="text-sm text-gray-500">Haz clic para subir una foto</p>
                         <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP - Máx. 10MB</p>
                       </div>
@@ -307,7 +307,7 @@ const PetProfileForm: React.FC = () => {
                     {...register('vaccinations', { required: 'La información de vacunas es obligatoria' })}
                     rows={3}
                     placeholder="Lista las vacunas aplicadas y fechas"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent resize-none"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent resize-none text-base touch-manipulation"
                   />
                   {errors.vaccinations && (
                     <p className="text-red-500 text-sm mt-1">{errors.vaccinations.message}</p>
@@ -322,7 +322,7 @@ const PetProfileForm: React.FC = () => {
                     {...register('observations')}
                     rows={3}
                     placeholder="Alergias, condiciones especiales, medicamentos, etc."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent resize-none"
+                    className="w-full px-3 sm:px-4 py-3 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent resize-none text-base touch-manipulation"
                   />
                 </div>
               </div>
@@ -333,7 +333,7 @@ const PetProfileForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full flex items-center justify-center space-x-2 px-6 py-4 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-xl font-medium hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white rounded-xl font-medium hover:from-hope-green-600 hover:to-hope-green-700 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg touch-manipulation text-base"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

@@ -26,46 +26,46 @@ const LoginPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-hope-green-50 via-white to-soft-blue-50">
       <div className="min-h-screen flex flex-col">
         {/* Header */}
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-8">
+        <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <div className="bg-gradient-to-r from-hope-green-500 to-soft-blue-500 p-4 rounded-2xl inline-block mb-6">
-              <Heart className="h-12 w-12 text-white" />
+          <div className="text-center mb-6 sm:mb-8">
+            <div className="bg-gradient-to-r from-hope-green-500 to-soft-blue-500 p-3 sm:p-4 rounded-2xl inline-block mb-4 sm:mb-6">
+              <Heart className="h-10 w-10 sm:h-12 sm:w-12 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 font-poppins mb-2">PetCode</h1>
-            <p className="text-gray-600">Dashboard</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 font-poppins mb-2">PetCode</h1>
+            <p className="text-sm sm:text-base text-gray-600">Dashboard</p>
           </div>
 
           {/* Hero Section */}
-          <div className="text-center mb-8 max-w-md">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 font-poppins">
+          <div className="text-center mb-6 sm:mb-8 max-w-sm sm:max-w-md">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 font-poppins">
               Protege a tu mascota con códigos QR de emergencia
             </h2>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
               Crea perfiles digitales para tus mascotas y genera códigos QR que ayuden a cualquier persona a contactarte si se pierden.
             </p>
           </div>
 
           {/* Features */}
-          <div className="mb-8 max-w-sm">
-            <div className="space-y-4">
+          <div className="mb-6 sm:mb-8 max-w-sm">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="bg-hope-green-100 p-2 rounded-lg">
-                  <Shield className="h-5 w-5 text-hope-green-600" />
+                <div className="bg-hope-green-100 p-2 rounded-lg flex-shrink-0">
+                  <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-hope-green-600" />
                 </div>
-                <span className="text-gray-700">Perfiles de emergencia seguros</span>
+                <span className="text-sm sm:text-base text-gray-700">Perfiles de emergencia seguros</span>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="bg-soft-blue-100 p-2 rounded-lg">
-                  <Smartphone className="h-5 w-5 text-soft-blue-600" />
+                <div className="bg-soft-blue-100 p-2 rounded-lg flex-shrink-0">
+                  <Smartphone className="h-4 w-4 sm:h-5 sm:w-5 text-soft-blue-600" />
                 </div>
-                <span className="text-gray-700">Códigos QR optimizados para móviles</span>
+                <span className="text-sm sm:text-base text-gray-700">Códigos QR optimizados para móviles</span>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="bg-purple-100 p-2 rounded-lg">
-                  <Globe className="h-5 w-5 text-purple-600" />
+                <div className="bg-purple-100 p-2 rounded-lg flex-shrink-0">
+                  <Globe className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                 </div>
-                <span className="text-gray-700">Acceso público sin necesidad de apps</span>
+                <span className="text-sm sm:text-base text-gray-700">Acceso público sin necesidad de apps</span>
               </div>
             </div>
           </div>
@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-white border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              className="w-full flex items-center justify-center space-x-3 px-4 sm:px-6 py-3 sm:py-4 bg-white border border-gray-300 rounded-xl text-sm sm:text-base text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-hope-green-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm touch-manipulation"
             >
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-hope-green-500"></div>
@@ -92,7 +92,7 @@ const LoginPage: React.FC = () => {
               )}
             </button>
 
-            <div className="mt-6 text-center text-sm text-gray-500">
+            <div className="mt-4 sm:mt-6 text-center text-xs sm:text-sm text-gray-500">
               <p>
                 Al continuar, aceptas nuestros términos de servicio y política de privacidad.
               </p>
@@ -101,10 +101,10 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="p-6 text-center">
+        <div className="p-4 sm:p-6 text-center">
           <div className="flex items-center justify-center space-x-2 text-gray-400">
-            <Heart className="h-4 w-4" />
-            <span className="text-sm">Hecho con amor para proteger a tus mascotas</span>
+            <Heart className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span className="text-xs sm:text-sm">Hecho con amor para proteger a tus mascotas</span>
           </div>
         </div>
       </div>

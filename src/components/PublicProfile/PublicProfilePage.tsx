@@ -70,15 +70,15 @@ const PublicProfilePage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-4 sm:py-8 px-4">
       {/* Modal de imagen expandida */}
       {isModalOpen && profile.photo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70" onClick={() => setIsModalOpen(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4" onClick={() => setIsModalOpen(false)}>
           <img
             src={profile.photo}
             alt={profile.petName}
-            className="max-h-[90vh] max-w-[90vw] rounded-2xl shadow-2xl border-4 border-white object-contain"
+            className="max-h-[80vh] max-w-[90vw] rounded-2xl shadow-2xl border-4 border-white object-contain"
           />
         </div>
       )}
-      <div className="max-w-md mx-auto">
+      <div className="max-w-sm sm:max-w-md mx-auto">
         {/* Banner de Emergencia - Solo si está perdida */}
         {profile.isLost && (
           <div className="mb-6">
@@ -98,7 +98,7 @@ const PublicProfilePage: React.FC = () => {
           {/* Foto y Nombre */}
           <div className="text-center mb-6">
             <div className="relative inline-block">
-              <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg cursor-pointer`} onClick={() => profile.photo && setIsModalOpen(true)}>
+              <div className={`w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-4 ${profile.isLost ? 'border-red-400' : 'border-green-400'} overflow-hidden mx-auto mb-4 shadow-lg cursor-pointer touch-manipulation`} onClick={() => profile.photo && setIsModalOpen(true)}>
                 {profile.photo ? (
                   <img
                     src={profile.photo}
@@ -107,7 +107,7 @@ const PublicProfilePage: React.FC = () => {
                   />
                 ) : (
                   <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400" />
+                    <Heart className="h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 text-gray-400" />
                   </div>
                 )}
               </div>
@@ -117,7 +117,7 @@ const PublicProfilePage: React.FC = () => {
                 </div>
               )}
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">{profile.petName}</h2>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{profile.petName}</h2>
           </div>
 
           {/* Mensaje del Dueño - Solo si está perdida */}
@@ -187,7 +187,7 @@ const PublicProfilePage: React.FC = () => {
           {profile.isLost && (
             <button
               onClick={handleCall}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"
+              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg touch-manipulation"
             >
               <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
               <span>Llamar al Dueño</span>
