@@ -16,6 +16,7 @@ const PetProfileForm: React.FC = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [photoError, setPhotoError] = useState<string>('');
+  const [photoDebug, setPhotoDebug] = useState<string>('');
   const navigate = useNavigate();
 
   const {
@@ -30,34 +31,54 @@ const PetProfileForm: React.FC = () => {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Limpiar errores previos
+      // Limpiar errores y debug previos
       setPhotoError('');
+      setPhotoDebug('');
+
+      // Mostrar información del archivo en la UI
+      const fileInfo = `📱 Archivo: ${file.name} | Tamaño: ${(file.size / 1024 / 1024).toFixed(2)}MB | Tipo: ${file.type}`;
+      setPhotoDebug(fileInfo);
 
       // Validar tamaño (máximo 10MB)
       const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {
-        setPhotoError('El archivo es demasiado grande. Máximo 10MB.');
+        const errorMsg = `El archivo es demasiado grande. Máximo 10MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)}MB`;
+        setPhotoError(errorMsg);
+        setPhotoDebug(prev => prev + '\n❌ Error de tamaño');
         return;
       }
 
       // Validar tipo
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        setPhotoError('Tipo de archivo no soportado. Usa JPEG, PNG o WebP.');
+        const errorMsg = `Tipo de archivo no soportado: ${file.type}. Usa JPEG, PNG o WebP.`;
+        setPhotoError(errorMsg);
+        setPhotoDebug(prev => prev + '\n❌ Error de tipo');
         return;
       }
 
+      setPhotoDebug(prev => prev + '\n✅ Validaciones pasadas, iniciando FileReader...');
       setPhotoFile(file);
       const reader = new FileReader();
 
       reader.onload = (e) => {
+        setPhotoDebug(prev => prev + '\n📖 FileReader completado, configurando preview...');
         setPhotoPreview(e.target?.result as string);
+        setPhotoDebug(prev => prev + '\n✅ Preview configurado correctamente');
       };
 
-      reader.onerror = () => {
-        setPhotoError('Error al leer el archivo. Intenta con otra imagen.');
+      reader.onerror = (error) => {
+        const errorMsg = `Error al leer el archivo: ${error instanceof Error ? error.message : 'Error de FileReader'}`;
+        setPhotoError(errorMsg);
+        setPhotoDebug(prev => prev + '\n❌ Error en FileReader: ' + errorMsg);
       };
 
+      reader.onabort = () => {
+        setPhotoError('Lectura del archivo cancelada');
+        setPhotoDebug(prev => prev + '\n❌ FileReader abortado');
+      };
+
+      setPhotoDebug(prev => prev + '\n🔄 Iniciando readAsDataURL...');
       reader.readAsDataURL(file);
     }
   };
@@ -73,11 +94,15 @@ const PetProfileForm: React.FC = () => {
 
       if (photoFile) {
         try {
+          setPhotoDebug(prev => prev + '\n🔄 Iniciando subida de foto al servidor...');
           const uploadResult = await uploadPetPhoto(photoFile);
           photoUrl = uploadResult.url;
           photoOptimizedUrl = uploadResult.optimizedUrl;
+          setPhotoDebug(prev => prev + '\n✅ Foto subida exitosamente');
         } catch (error) {
-          console.error('Error uploading photo:', error);
+          const errorMsg = `Error al subir foto: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+          setPhotoError(errorMsg);
+          setPhotoDebug(prev => prev + '\n❌ Error en subida: ' + errorMsg);
           // Continuar sin foto si falla la subida
           photoUrl = '';
           photoOptimizedUrl = '';
@@ -246,6 +271,7 @@ const PetProfileForm: React.FC = () => {
                           setPhotoFile(null);
                           setPhotoPreview('');
                           setPhotoError('');
+                          setPhotoDebug('');
                         }}
                         className="mt-2 text-sm text-red-600 hover:text-red-700"
                       >
@@ -271,6 +297,12 @@ const PetProfileForm: React.FC = () => {
                   {photoError && (
                     <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                       <p className="text-sm text-red-600">{photoError}</p>
+                    </div>
+                  )}
+
+                  {photoDebug && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs text-blue-800 font-mono whitespace-pre-line">{photoDebug}</p>
                     </div>
                   )}
                 </div>
