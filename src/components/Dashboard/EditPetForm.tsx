@@ -255,22 +255,6 @@ const EditPetForm: React.FC<EditPetFormProps> = ({ pet, onClose, onUpdate }) => 
               />
             </div>
 
-            {/* Owner Message */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Aviso del Dueño
-              </label>
-              <textarea
-                {...register('ownerMessage')}
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-hope-green-500"
-                placeholder="Mensaje especial para quien encuentre tu mascota (solo se mostrará si está perdida)..."
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                Este mensaje solo aparecerá en el perfil público si la mascota está marcada como perdida
-              </p>
-            </div>
-
             {/* Action Buttons */}
             <div className="flex space-x-3 pt-6">
               <button
