@@ -88,6 +88,7 @@ const PetProfileForm: React.FC = () => {
 
     try {
       setLoading(true);
+      setPhotoDebug(prev => prev + '\n🔄 Iniciando creación de perfil...');
 
       let photoUrl = '';
       let photoOptimizedUrl = '';
@@ -99,6 +100,7 @@ const PetProfileForm: React.FC = () => {
           photoUrl = uploadResult.url;
           photoOptimizedUrl = uploadResult.optimizedUrl;
           setPhotoDebug(prev => prev + '\n✅ Foto subida exitosamente');
+          setPhotoDebug(prev => prev + `\n📏 Longitud URL: ${photoUrl.length} caracteres`);
         } catch (error) {
           const errorMsg = `Error al subir foto: ${error instanceof Error ? error.message : 'Error desconocido'}`;
           setPhotoError(errorMsg);
@@ -110,6 +112,7 @@ const PetProfileForm: React.FC = () => {
       }
 
       const profileUrl = generateProfileUrl();
+      setPhotoDebug(prev => prev + '\n🔗 URL de perfil generada: ' + profileUrl);
 
       const petData: Omit<PetProfile, 'id'> = {
         clientId: currentClient.id,
@@ -128,8 +131,11 @@ const PetProfileForm: React.FC = () => {
         updatedAt: new Date().toISOString()
       };
 
+      setPhotoDebug(prev => prev + '\n📝 Datos del perfil preparados, guardando en Firestore...');
       const petId = await createPetProfile(petData);
+      setPhotoDebug(prev => prev + '\n✅ Perfil creado exitosamente, ID: ' + petId);
 
+      setPhotoDebug(prev => prev + '\n🛒 Creando pedido QR automático...');
       // Create QR order automatically
       await createQROrder({
         clientId: currentClient.id,
@@ -149,9 +155,14 @@ const PetProfileForm: React.FC = () => {
         updatedAt: new Date().toISOString()
       });
 
+      setPhotoDebug(prev => prev + '\n✅ Pedido QR creado exitosamente');
+      setPhotoDebug(prev => prev + '\n🎉 ¡Todo completado! Redirigiendo...');
       navigate('/');
     } catch (error) {
-      console.error('Error creating pet profile:', error);
+      const errorMsg = `Error creating pet profile: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+      console.error(errorMsg);
+      setPhotoError(errorMsg);
+      setPhotoDebug(prev => prev + '\n❌ Error en creación: ' + errorMsg);
     } finally {
       setLoading(false);
     }

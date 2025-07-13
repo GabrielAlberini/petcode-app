@@ -61,14 +61,22 @@ export const updateClient = async (clientId: string, updates: Partial<Client>): 
 // Pet Profile Services
 export const createPetProfile = async (petData: Omit<PetProfile, 'id'>): Promise<string> => {
   try {
+    console.log('🔥 Creando perfil en Firestore:', {
+      petName: petData.petName,
+      photoLength: petData.photo?.length || 0,
+      photoOptimizedLength: petData.photoOptimized?.length || 0
+    });
+
     const docRef = await addDoc(collection(db, 'mascotas'), {
       ...petData,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
+
+    console.log('✅ Perfil creado exitosamente en Firestore, ID:', docRef.id);
     return docRef.id;
   } catch (error) {
-    console.error('Error creating pet profile:', error);
+    console.error('❌ Error creating pet profile in Firestore:', error);
     throw error;
   }
 };
