@@ -15,6 +15,7 @@ const PetProfileForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
+  const [photoError, setPhotoError] = useState<string>('');
   const navigate = useNavigate();
 
   const {
@@ -29,11 +30,34 @@ const PetProfileForm: React.FC = () => {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Limpiar errores previos
+      setPhotoError('');
+
+      // Validar tamaño (máximo 10MB)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        setPhotoError('El archivo es demasiado grande. Máximo 10MB.');
+        return;
+      }
+
+      // Validar tipo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        setPhotoError('Tipo de archivo no soportado. Usa JPEG, PNG o WebP.');
+        return;
+      }
+
       setPhotoFile(file);
       const reader = new FileReader();
+
       reader.onload = (e) => {
         setPhotoPreview(e.target?.result as string);
       };
+
+      reader.onerror = () => {
+        setPhotoError('Error al leer el archivo. Intenta con otra imagen.');
+      };
+
       reader.readAsDataURL(file);
     }
   };
@@ -48,9 +72,16 @@ const PetProfileForm: React.FC = () => {
       let photoOptimizedUrl = '';
 
       if (photoFile) {
-        const uploadResult = await uploadPetPhoto(photoFile);
-        photoUrl = uploadResult.url;
-        photoOptimizedUrl = uploadResult.optimizedUrl;
+        try {
+          const uploadResult = await uploadPetPhoto(photoFile);
+          photoUrl = uploadResult.url;
+          photoOptimizedUrl = uploadResult.optimizedUrl;
+        } catch (error) {
+          console.error('Error uploading photo:', error);
+          // Continuar sin foto si falla la subida
+          photoUrl = '';
+          photoOptimizedUrl = '';
+        }
       }
 
       const profileUrl = generateProfileUrl();
@@ -214,6 +245,7 @@ const PetProfileForm: React.FC = () => {
                         onClick={() => {
                           setPhotoFile(null);
                           setPhotoPreview('');
+                          setPhotoError('');
                         }}
                         className="mt-2 text-sm text-red-600 hover:text-red-700"
                       >
@@ -225,14 +257,21 @@ const PetProfileForm: React.FC = () => {
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <Upload className="h-8 w-8 text-gray-400 mb-2" />
                         <p className="text-sm text-gray-500">Haz clic para subir una foto</p>
+                        <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP - Máx. 10MB</p>
                       </div>
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
                         onChange={handlePhotoChange}
                         className="hidden"
                       />
                     </label>
+                  )}
+
+                  {photoError && (
+                    <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-600">{photoError}</p>
+                    </div>
                   )}
                 </div>
               </div>
