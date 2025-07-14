@@ -22,7 +22,13 @@ const UserDashboard: React.FC = () => {
   const [editingOwnerMessage, setEditingOwnerMessage] = useState<{ [key: string]: string }>({});
   const [isSavingMessage, setIsSavingMessage] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const navigate = useNavigate();
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -97,6 +103,7 @@ const UserDashboard: React.FC = () => {
     try {
       setIsUpdatingLostStatus(true);
       await togglePetLostStatus(petId, !currentStatus);
+      showToast('success', !currentStatus ? 'Mascota marcada como perdida' : 'Mascota marcada como encontrada');
 
       // Reload pets data
       if (currentClient) {
@@ -104,6 +111,7 @@ const UserDashboard: React.FC = () => {
         setPets(petsData);
       }
     } catch (error) {
+      showToast('error', 'Error al cambiar el estado de la mascota');
       console.error('Error toggling pet lost status:', error);
     } finally {
       setIsUpdatingLostStatus(false);
@@ -241,42 +249,39 @@ const UserDashboard: React.FC = () => {
 
       {/* Main Content */}
       <div className="px-4 sm:px-6 py-6">
-        {/* Welcome Section */}
-        <div className="mb-6">
+        {/* Saludo y resumen del perfil */}
+        <div className="mb-10">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 font-poppins">
             ¡Hola, {currentClient?.firstName}!
           </h2>
-          <p className="text-gray-600 mt-1 text-sm sm:text-base">
+          <p className="text-gray-600 mt-1 text-sm sm:text-base mb-4">
             Gestiona tus mascotas y códigos QR
           </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center">
-              <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-hope-green-500 flex-shrink-0" />
-              <div className="ml-3 min-w-0">
-                <p className="text-xs font-medium text-gray-500">Mascotas</p>
-                <p className="text-lg sm:text-xl font-bold text-gray-900">{pets.length}</p>
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center">
+                <Heart className="h-5 w-5 sm:h-6 sm:w-6 text-hope-green-500 flex-shrink-0" />
+                <div className="ml-3 min-w-0">
+                  <p className="text-xs font-medium text-gray-500">Mascotas</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{pets.length}</p>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
-            <div className="flex items-center">
-              <QrCode className="h-5 w-5 sm:h-6 sm:w-6 text-soft-blue-500 flex-shrink-0" />
-              <div className="ml-3 min-w-0">
-                <p className="text-xs font-medium text-gray-500">Pedidos</p>
-                <p className="text-lg sm:text-xl font-bold text-gray-900">{orders.length}</p>
+            <div className="bg-white rounded-xl p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center">
+                <QrCode className="h-5 w-5 sm:h-6 sm:w-6 text-soft-blue-500 flex-shrink-0" />
+                <div className="ml-3 min-w-0">
+                  <p className="text-xs font-medium text-gray-500">Pedidos</p>
+                  <p className="text-lg sm:text-xl font-bold text-gray-900">{orders.length}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Lost Pets Alert */}
+        {/* Alerta de mascotas perdidas debajo del saludo y resumen */}
         {pets.filter(pet => pet.isLost).length > 0 && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 sm:p-5">
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-xl p-4 sm:p-5">
             <div className="flex items-start space-x-3">
               <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div className="min-w-0">
@@ -288,244 +293,153 @@ const UserDashboard: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* Add Pet Button */}
-        <div className="mb-6">
-          <Link
-            to="/mascota/nueva"
-            className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-hope-green-500 to-hope-green-600 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-medium shadow-lg hover:from-hope-green-600 hover:to-hope-green-700 transition-all duration-200 text-sm sm:text-base touch-manipulation"
-          >
-            <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
-            <span>Agregar Nueva Mascota</span>
-          </Link>
-        </div>
-
-        {/* Pets Section */}
-        <div className="space-y-4">
-          <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Mis Mascotas</h3>
-
-          {pets.length === 0 ? (
-            <div className="bg-white rounded-xl p-6 sm:p-8 text-center shadow-sm">
-              <Heart className="h-10 w-10 sm:h-12 sm:w-12 text-gray-300 mx-auto mb-4" />
-              <h4 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No tienes mascotas registradas</h4>
-              <p className="text-sm sm:text-base text-gray-600 mb-4">Registra tu primera mascota para crear su perfil y código QR</p>
-              <Link
-                to="/mascota/nueva"
-                className="inline-flex items-center space-x-2 bg-hope-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-hope-green-600 transition-colors text-sm sm:text-base"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Agregar Mascota</span>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-3 sm:space-y-4">
-              {pets
-                .sort((a, b) => {
-                  // Primero las mascotas perdidas
-                  if (a.isLost && !b.isLost) return -1;
-                  if (!a.isLost && b.isLost) return 1;
-                  // Si ambas tienen el mismo estado, ordenar por fecha de creación (más reciente primero)
-                  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                })
-                .map((pet) => (
-                  <div key={pet.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    {/* Lost Status Banner */}
+        {/* Sección de Mascotas Destacada */}
+        <div className="mb-10">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 font-poppins mb-6 text-center">
+            Mis Mascotas
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+            {pets.length === 0 && (
+              <div className="col-span-full text-center text-gray-500 text-lg mt-8 animate-fade-in">
+                <Heart className="h-10 w-10 text-hope-green-300 mx-auto mb-2" />
+                <p className="font-bold text-gray-700">¡Bienvenido! Aún no tienes mascotas registradas.</p>
+                <p className="text-sm text-gray-500 mb-4">Agrega tu primera mascota para comenzar a usar PetCode.</p>
+                <button
+                  onClick={() => navigate('/mascota/nueva')}
+                  className="mt-2 bg-hope-green-500 hover:bg-hope-green-600 text-white px-6 py-2 rounded-full font-medium shadow-md transition"
+                  aria-label="Agregar mascota"
+                >
+                  <Plus className="h-5 w-5 inline-block mr-2" />Agregar Mascota
+                </button>
+              </div>
+            )}
+            {pets.length > 0 && (
+              <>
+                {pets.map((pet) => (
+                  <div key={pet.id} className="relative bg-white shadow-xl rounded-2xl p-6 w-full max-w-xs flex flex-col items-center border border-gray-100 transition-transform duration-300 ease-in-out hover:scale-105 animate-fade-in">
+                    <div className={`w-28 h-28 mb-4 rounded-full overflow-hidden border-4 shadow-md ${pet.isLost ? 'border-red-500' : 'border-hope-green-500'}`}>
+                      <img src={pet.photoOptimized || pet.photo || '/default-pet.png'} alt={pet.petName} className="object-cover w-full h-full" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 text-center">{pet.petName}</h3>
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 ${pet.isLost ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>{pet.isLost ? 'Perdido' : 'En casa'}</span>
+                    {/* Mensaje de emergencia editable si la mascota está perdida */}
                     {pet.isLost && (
-                      <div className="bg-red-500 text-white px-4 py-2">
-                        <div className="flex items-center space-x-2">
-                          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
-                          <span className="font-medium text-sm sm:text-base">¡{pet.petName} está PERDIDA!</span>
-                        </div>
+                      <div className="w-full mt-2 flex items-center bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                        <AlertTriangle className="h-4 w-4 text-red-400 mr-2" />
+                        <span className="text-xs text-gray-700 flex-1 truncate">
+                          {pet.ownerMessage
+                            ? <>Mensaje: <span className="font-medium">{pet.ownerMessage}</span></>
+                            : <span className="text-gray-400">Sin mensaje de emergencia</span>
+                          }
+                        </span>
+                        <button
+                          onClick={() => handleEditOwnerMessage(pet.id, pet.ownerMessage || '')}
+                          className="ml-2 p-1 rounded hover:bg-red-100 transition"
+                          title={pet.ownerMessage ? 'Editar mensaje' : 'Agregar mensaje'}
+                        >
+                          <Edit className="h-4 w-4 text-red-500" />
+                        </button>
                       </div>
                     )}
-
-                    <div className="p-4 sm:p-5">
-                      <div className="flex items-center space-x-3 mb-3">
-                        {pet.photo ? (
-                          <img
-                            src={pet.photoOptimized || pet.photo}
-                            alt={pet.petName}
-                            className="h-12 w-12 sm:h-14 sm:w-14 object-cover rounded-full border-2 border-gray-200 flex-shrink-0"
-                          />
+                    <div className="flex space-x-3 mt-2">
+                      <button onClick={() => handleEditPet(pet)} className="p-2 rounded-full bg-soft-blue-100 hover:bg-soft-blue-200 text-soft-blue-700" title="Editar">
+                        <Edit className="h-5 w-5" />
+                      </button>
+                      <button onClick={() => handleToggleLostStatus(pet.id, pet.isLost)} className={`p-2 rounded-full flex items-center justify-center ${pet.isLost ? 'bg-green-100 hover:bg-green-200 text-green-700' : 'bg-red-100 hover:bg-red-200 text-red-700'}`} title={pet.isLost ? 'Marcar como encontrado' : 'Marcar como perdido'} disabled={isUpdatingLostStatus}>
+                        {isUpdatingLostStatus ? (
+                          <span className="flex items-center justify-center w-5 h-5">
+                            <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full"></span>
+                          </span>
+                        ) : pet.isLost ? (
+                          <CheckCircle className="h-5 w-5" />
                         ) : (
-                          <div className="h-12 w-12 sm:h-14 sm:w-14 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Heart className="h-6 w-6 text-gray-400" />
-                          </div>
+                          <AlertTriangle className="h-5 w-5" />
                         )}
+                      </button>
+                      <Link to={`/mascota/${pet.profileUrl}`} className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700" title="Ver perfil público">
+                        <ExternalLink className="h-5 w-5" />
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+          {/* Botón flotante para agregar mascota */}
+          <button
+            onClick={() => navigate('/mascota/nueva')}
+            className="fixed bottom-8 right-8 z-50 bg-hope-green-500 hover:bg-hope-green-600 text-white rounded-full shadow-lg p-5 flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hope-green-400 sm:p-5 p-4"
+            style={{ width: '56px', height: '56px' }}
+            title="Agregar mascota"
+          >
+            <Plus className="h-7 w-7" />
+          </button>
+        </div>
+        {/* Sección secundaria: Órdenes, perfil, etc. */}
+        <div className="mt-12">
+          {/* Aquí irían las órdenes, perfil, mensajes, etc., en tarjetas más pequeñas o acordeón */}
+          {/* Welcome Section */}
+          <div className="mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 font-poppins">
+              ¡Hola, {currentClient?.firstName}!
+            </h2>
+            <p className="text-gray-600 mt-1 text-sm sm:text-base">
+              Gestiona tus mascotas y códigos QR
+            </p>
+          </div>
 
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-gray-900 text-base sm:text-lg truncate">{pet.petName}</h4>
-                          <p className="text-sm text-gray-500 truncate">{pet.breed} • {pet.age}</p>
-                        </div>
+          {/* Orders Section */}
+          {orders.length > 0 && (
+            <div className="mt-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-700">Pedidos de Códigos QR</h3>
+                <div className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full text-xs font-medium">
+                  {orders.length} pedido{orders.length > 1 ? 's' : ''}
+                </div>
+              </div>
 
-                        <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-                          <button
-                            onClick={() => handleEditPet(pet)}
-                            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors touch-manipulation"
-                            aria-label="Editar mascota"
-                          >
-                            <Edit className="h-4 w-4" />
-                          </button>
-                        </div>
+              <div className="space-y-3">
+                {orders.map((order) => (
+                  <div key={order.id} className="bg-gray-50 rounded-lg shadow-sm border border-gray-200 p-4 flex flex-col gap-2">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <QrCode className="h-5 w-5 text-soft-blue-500" />
+                        <span className="font-semibold text-gray-800 text-sm">{order.petName}</span>
                       </div>
-
-                      {/* Quick Actions */}
-                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                      <span className="flex items-center gap-1">
+                        <span className={`w-2 h-2 rounded-full ${order.status === 'pendiente' ? 'bg-yellow-400' : order.status === 'impreso' ? 'bg-blue-400' : order.status === 'enviado' ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                        <span className="px-2 py-0.5 text-xs rounded-full font-semibold bg-gray-100 text-gray-700">{getStatusText(order.status)}</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs text-gray-500">
+                      <span>#{order.id?.slice(-8)}</span>
+                      <span>•</span>
+                      <span>{formatDate(order.createdAt)}</span>
+                      <span>•</span>
+                      <span>{order.clientCity}, {order.clientCountry}</span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                      {order.status === 'pendiente' ? (
                         <button
-                          onClick={() => handleToggleLostStatus(pet.id, pet.isLost)}
-                          disabled={isUpdatingLostStatus}
-                          className={`flex-1 flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 rounded-lg text-sm font-medium transition-colors touch-manipulation ${pet.isLost
-                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                            : 'bg-red-100 text-red-700 hover:bg-red-200'
-                            }`}
+                          onClick={() => handleEditAddress(order)}
+                          className="flex-1 flex items-center justify-center gap-1 py-2 px-3 bg-soft-blue-100 text-soft-blue-700 rounded-md font-medium hover:bg-soft-blue-200 transition-colors text-xs"
                         >
-                          {pet.isLost ? (
-                            <>
-                              <CheckCircle className="h-4 w-4" />
-                              <span>Encontrada</span>
-                            </>
-                          ) : (
-                            <>
-                              <AlertTriangle className="h-4 w-4" />
-                              <span>Marcar Perdida</span>
-                            </>
-                          )}
+                          <Edit className="h-4 w-4" />
+                          Editar dirección
                         </button>
-
-                        <Link
-                          to={`/mascota/${pet.profileUrl}`}
-                          className="flex items-center justify-center space-x-2 py-2.5 sm:py-2 px-3 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors touch-manipulation"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          <span>Ver</span>
-                        </Link>
-                      </div>
-
-                      {/* Owner Message for Lost Pets */}
-                      {pet.isLost && (
-                        <div className="mt-3 pt-3 border-t border-gray-100">
-                          <div className="flex items-start space-x-2">
-                            <Megaphone className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm text-gray-700">
-                                {pet.ownerMessage || 'Sin mensaje personalizado'}
-                              </p>
-                              <button
-                                onClick={() => handleEditOwnerMessage(pet.id, pet.ownerMessage || '')}
-                                className="text-xs text-red-600 hover:text-red-700 mt-1 touch-manipulation"
-                              >
-                                {pet.ownerMessage ? 'Editar mensaje' : 'Agregar mensaje'}
-                              </button>
-                            </div>
-                          </div>
+                      ) : (
+                        <div className="flex-1 flex items-center justify-center gap-1 py-2 px-3 bg-gray-200 text-gray-500 rounded-md font-medium border border-gray-200 text-xs">
+                          <Package className="h-4 w-4" />
+                          Dirección bloqueada
                         </div>
                       )}
                     </div>
                   </div>
                 ))}
+              </div>
             </div>
           )}
         </div>
-
-        {/* Orders Section */}
-        {orders.length > 0 && (
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Pedidos de Códigos QR</h3>
-              <div className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
-                {orders.length} pedido{orders.length > 1 ? 's' : ''}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {orders.map((order) => (
-                <div key={order.id} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300">
-                  {/* Status Banner */}
-                  <div className={`px-6 py-4 ${order.status === 'pendiente' ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-b border-yellow-200' :
-                    order.status === 'impreso' ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-200' :
-                      order.status === 'enviado' ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200' :
-                        'bg-gradient-to-r from-red-50 to-pink-50 border-b border-red-200'}`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className={`p-3 rounded-full ${order.status === 'pendiente' ? 'bg-yellow-100' :
-                          order.status === 'impreso' ? 'bg-blue-100' :
-                            order.status === 'enviado' ? 'bg-green-100' :
-                              'bg-red-100'}`}>
-                          {order.status === 'pendiente' && <Clock className="h-6 w-6 text-yellow-600" />}
-                          {order.status === 'impreso' && <Package className="h-6 w-6 text-blue-600" />}
-                          {order.status === 'enviado' && <Truck className="h-6 w-6 text-green-600" />}
-                          {order.status === 'cancelado' && <XCircle className="h-6 w-6 text-red-600" />}
-                        </div>
-                        <div>
-                          <h4 className="text-xl font-bold text-gray-900">{order.petName}</h4>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <span className={`px-4 py-2 text-sm font-bold rounded-full ${getStatusColor(order.status)}`}>
-                          {getStatusText(order.status)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Order Details */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                      {/* Order Info */}
-                      <div className="bg-gray-50 rounded-xl p-4">
-                        <div className="flex items-center space-x-2 mb-3">
-                          <Package className="h-5 w-5 text-gray-600" />
-                          <h5 className="font-semibold text-gray-900">Información del Pedido</h5>
-                        </div>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Número:</span>
-                            <span className="font-medium text-gray-900">#{order.id?.slice(-8)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Fecha:</span>
-                            <span className="font-medium text-gray-900">{formatDate(order.createdAt)}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Shipping Address */}
-                      <div className="bg-gray-50 rounded-xl p-4 lg:col-span-2">
-                        <div className="flex items-center space-x-2 mb-3">
-                          <MapPin className="h-5 w-5 text-gray-600" />
-                          <h5 className="font-semibold text-gray-900">Dirección de Envío</h5>
-                        </div>
-                        <div className="space-y-1 text-sm">
-                          <p className="text-gray-900 font-medium">{order.clientAddress || 'No especificada'}</p>
-                          <p className="text-gray-600">{order.clientCity}, {order.clientPostalCode}</p>
-                          <p className="text-gray-600">{order.clientCountry}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {order.status === 'pendiente' ? (
-                        <button
-                          onClick={() => handleEditAddress(order)}
-                          className="flex-1 flex items-center justify-center space-x-2 py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl touch-manipulation"
-                        >
-                          <Edit className="h-5 w-5" />
-                          <span>Editar Dirección de Envío</span>
-                        </button>
-                      ) : (
-                        <div className="flex-1 flex items-center justify-center space-x-2 py-3 px-6 bg-gray-100 text-gray-500 rounded-xl font-medium border border-gray-200">
-                          <Package className="h-5 w-5" />
-                          <span>Dirección bloqueada - Pedido {getStatusText(order.status)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Edit Pet Modal */}
@@ -662,6 +576,11 @@ const UserDashboard: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {toast && (
+        <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white font-medium transition-all ${toast.type === 'success' ? 'bg-hope-green-500' : 'bg-red-500'}`}>
+          {toast.message}
         </div>
       )}
     </div>
