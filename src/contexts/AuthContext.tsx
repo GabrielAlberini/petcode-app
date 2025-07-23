@@ -1,10 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'firebase/auth';
-  User, 
-  signInWithPopup, 
-  signOut, 
-  onAuthStateChanged 
-} from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
 import { getClient } from '../services/firestoreService';
 import { AuthUser, Client } from '../types';
