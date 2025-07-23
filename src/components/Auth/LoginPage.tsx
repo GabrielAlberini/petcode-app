@@ -14,9 +14,25 @@ const LoginPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      await signInWithGoogleRedirect();
+      // Mock authentication for development
+      // Remove this and uncomment the line above when Firebase domain is configured
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
+      
+      // Create a mock user object
+      const mockUser = {
+        uid: 'mock-user-123',
+        email: 'usuario@ejemplo.com',
+        displayName: 'Usuario de Prueba',
+        photoURL: 'https://via.placeholder.com/150'
+      };
+      
+      // Store mock user in localStorage for persistence
+      localStorage.setItem('mockUser', JSON.stringify(mockUser));
+      
+      // Reload the page to trigger auth state change
+      window.location.reload();
     } catch (error) {
-      console.error('Error redirecting to Google sign in:', error);
+      console.error('Error en autenticación simulada:', error);
     } finally {
       setLoading(false);
     }
