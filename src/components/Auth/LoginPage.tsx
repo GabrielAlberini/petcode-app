@@ -4,7 +4,7 @@ import { Heart, Shield, Smartphone, Globe } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const { currentUser, signInWithGoogle } = useAuth();
+  const { currentUser, signInWithGoogleRedirect } = useAuth();
   const [loading, setLoading] = useState(false);
 
   if (currentUser) {
@@ -14,9 +14,9 @@ const LoginPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      await signInWithGoogle();
+      await signInWithGoogleRedirect();
     } catch (error) {
-      console.error('Error signing in:', error);
+      console.error('Error redirecting to Google sign in:', error);
     } finally {
       setLoading(false);
     }
