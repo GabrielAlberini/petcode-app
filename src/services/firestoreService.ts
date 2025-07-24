@@ -16,6 +16,10 @@ import { generateProfileUrl } from '../utils/profileUtils';
 // Client Services
 export const createClient = async (clientData: Omit<Client, 'id'>): Promise<string> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const docRef = await addDoc(collection(db, 'clientes'), {
       ...clientData,
       createdAt: new Date().toISOString(),
@@ -53,6 +57,10 @@ export const getClient = async (userId: string): Promise<Client | null> => {
 
 export const updateClient = async (clientId: string, updates: Partial<Client>): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const clientRef = doc(db, 'clientes', clientId);
     await updateDoc(clientRef, {
       ...updates,
@@ -67,6 +75,10 @@ export const updateClient = async (clientId: string, updates: Partial<Client>): 
 // Pet Profile Services
 export const createPetProfile = async (petData: Omit<PetProfile, 'id'>): Promise<string> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     console.log('🔥 Creando perfil en Firestore:', {
       petName: petData.petName,
       photoLength: petData.photo?.length || 0,
@@ -89,6 +101,11 @@ export const createPetProfile = async (petData: Omit<PetProfile, 'id'>): Promise
 
 export const getClientPets = async (clientId: string): Promise<PetProfile[]> => {
   try {
+    if (!db) {
+      console.warn('Firestore not available, returning empty pets array');
+      return [];
+    }
+    
     // Primero intentamos con la consulta optimizada
     try {
       const q = query(
@@ -132,6 +149,10 @@ export const getClientPets = async (clientId: string): Promise<PetProfile[]> => 
 
 export const updatePetProfile = async (petId: string, updates: Partial<PetProfile>): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const petRef = doc(db, 'mascotas', petId);
     await updateDoc(petRef, {
       ...updates,
@@ -158,6 +179,10 @@ export const updatePetProfile = async (petId: string, updates: Partial<PetProfil
 
 export const togglePetLostStatus = async (petId: string, isLost: boolean): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const petRef = doc(db, 'mascotas', petId);
     await updateDoc(petRef, {
       isLost,
@@ -171,6 +196,10 @@ export const togglePetLostStatus = async (petId: string, isLost: boolean): Promi
 
 export const migrateExistingPets = async (): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const querySnapshot = await getDocs(collection(db, 'mascotas'));
 
     const updatePromises = querySnapshot.docs.map(doc => {
@@ -203,6 +232,10 @@ export const migrateExistingPets = async (): Promise<void> => {
 
 export const migratePetUrls = async (): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const querySnapshot = await getDocs(collection(db, 'mascotas'));
 
     const updatePromises = querySnapshot.docs.map(doc => {
@@ -228,6 +261,11 @@ export const migratePetUrls = async (): Promise<void> => {
 
 export const getPublicProfile = async (profileUrl: string): Promise<PublicProfile | null> => {
   try {
+    if (!db) {
+      console.warn('Firestore not available, returning null public profile');
+      return null;
+    }
+    
     const q = query(collection(db, 'mascotas'), where('profileUrl', '==', profileUrl));
     const querySnapshot = await getDocs(q);
 
@@ -264,6 +302,10 @@ export const getPublicProfile = async (profileUrl: string): Promise<PublicProfil
 // QR Order Services
 export const createQROrder = async (orderData: Omit<QROrder, 'id'>): Promise<string> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const docRef = await addDoc(collection(db, 'pedidosQR'), {
       ...orderData,
       createdAt: new Date().toISOString(),
@@ -278,6 +320,11 @@ export const createQROrder = async (orderData: Omit<QROrder, 'id'>): Promise<str
 
 export const getClientOrders = async (clientId: string): Promise<QROrder[]> => {
   try {
+    if (!db) {
+      console.warn('Firestore not available, returning empty orders array');
+      return [];
+    }
+    
     // Primero intentamos con la consulta optimizada
     try {
       const q = query(
@@ -321,6 +368,11 @@ export const getClientOrders = async (clientId: string): Promise<QROrder[]> => {
 
 export const getAllOrders = async (): Promise<QROrder[]> => {
   try {
+    if (!db) {
+      console.warn('Firestore not available, returning empty orders array');
+      return [];
+    }
+    
     const q = query(collection(db, 'pedidosQR'), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
 
@@ -336,6 +388,10 @@ export const getAllOrders = async (): Promise<QROrder[]> => {
 
 export const updateOrderStatus = async (orderId: string, status: QROrder['status']): Promise<void> => {
   try {
+    if (!db) {
+      throw new Error('Firestore not available');
+    }
+    
     const orderRef = doc(db, 'pedidosQR', orderId);
     await updateDoc(orderRef, {
       status,
