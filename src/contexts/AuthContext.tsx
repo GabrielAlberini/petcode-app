@@ -116,15 +116,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const refreshClient = async () => {
     if (currentUser) {
       try {
-        let client = await getClient(currentUser.uid);
-        
-        // Si no existe el cliente, crearlo automáticamente
-        if (!client) {
-          const newClientData = {
+        if (firebaseConfigured) {
+          // Use Firestore when Firebase is configured
+          let client = await getClient(currentUser.uid);
+          
+          // Si no existe el cliente, crearlo automáticamente
+          if (!client) {
+            const newClientData = {
+              userId: currentUser.uid,
+              email: currentUser.email,
+              firstName: currentUser.displayName?.split(' ')[0] || '',
+              lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
+              phone: '',
+              address: '',
+              city: '',
+              postalCode: '',
+              country: '',
+              role: 'user' as const,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
+            };
+            
+            const clientId = await createClient(newClientData);
+            client = { id: clientId, ...newClientData };
+          }
+          
+          setCurrentClient(client);
+        } else {
+          // Use mock client data when Firebase is not configured
+          const mockClientData = {
+            id: `mock-client-${currentUser.uid}`,
             userId: currentUser.uid,
             email: currentUser.email,
-            firstName: currentUser.displayName?.split(' ')[0] || '',
-            lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
+            firstName: currentUser.displayName?.split(' ')[0] || 'Usuario',
+            lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || 'de Prueba',
             phone: '',
             address: '',
             city: '',
@@ -135,11 +160,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             updatedAt: new Date().toISOString()
           };
           
-          const clientId = await createClient(newClientData);
-          client = { id: clientId, ...newClientData };
+          setCurrentClient(mockClientData);
         }
-        
-        setCurrentClient(client);
       } catch (error) {
         console.error('Error refreshing client:', error);
         setCurrentClient(null);
@@ -167,30 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             
             // Load client data
             try {
-              let client = await getClient(user.uid);
-              
-              // Si no existe el cliente, crearlo automáticamente
-              if (!client) {
-                const newClientData = {
-                  userId: user.uid,
-                  email: user.email || '',
-                  firstName: user.displayName?.split(' ')[0] || '',
-                  lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-                  phone: '',
-                  address: '',
-                  city: '',
-                  postalCode: '',
-                  country: '',
-                  role: 'user' as const,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                };
-                
-                const clientId = await createClient(newClientData);
-                client = { id: clientId, ...newClientData };
-              }
-              
-              setCurrentClient(client);
+              await refreshClient();
             } catch (error) {
               console.error('Error loading client:', error);
               setCurrentClient(null);
@@ -229,37 +228,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (mockUserData) {
             const mockUser = JSON.parse(mockUserData);
             setCurrentUser(mockUser);
-            
-            // Try to load client data for mock user
-            try {
-              let client = await getClient(mockUser.uid);
-              
-              // Si no existe el cliente mock, crearlo automáticamente
-              if (!client) {
-                const newClientData = {
-                  userId: mockUser.uid,
-                  email: mockUser.email,
-                  firstName: mockUser.displayName?.split(' ')[0] || 'Usuario',
-                  lastName: mockUser.displayName?.split(' ').slice(1).join(' ') || 'de Prueba',
-                  phone: '',
-                  address: '',
-                  city: '',
-                  postalCode: '',
-                  country: '',
-                  role: 'user' as const,
-                  createdAt: new Date().toISOString(),
-                  updatedAt: new Date().toISOString()
-                };
-                
-                const clientId = await createClient(newClientData);
-                client = { id: clientId, ...newClientData };
-              }
-              
-              setCurrentClient(client);
-            } catch (error) {
-              console.error('Error loading mock client:', error);
-              setCurrentClient(null);
-            }
           } else {
             setCurrentUser(null);
             setCurrentClient(null);
@@ -273,7 +241,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       };
 
-      checkMockUser();
+      checkMockUser().then(() => {
+        // After setting the mock user, refresh client data
+        if (currentUser) {
+          refreshClient();
+        }
+      });
     }
 
     return () => {
