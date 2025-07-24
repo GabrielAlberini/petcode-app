@@ -5,7 +5,6 @@ import { useAuth } from '../../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
   const { currentUser, signInWithGoogleRedirect, loading } = useAuth();
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Show loading while authentication state is being determined
