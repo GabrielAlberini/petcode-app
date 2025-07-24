@@ -12,7 +12,7 @@ try {
   const firebaseConfig = await import('../config/firebase');
   auth = firebaseConfig.auth;
   googleProvider = firebaseConfig.googleProvider;
-  firebaseConfigured = true;
+  firebaseConfigured = !!(auth && googleProvider);
 } catch (error) {
   console.warn('Firebase configuration error, using mock authentication:', error);
   firebaseConfigured = false;
@@ -54,6 +54,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     localStorage.setItem('mockUser', JSON.stringify(mockUser));
     setCurrentUser(mockUser);
+    
+    // Try to load client data for mock user
+    try {
+      const client = await getClient(mockUser.uid);
+      setCurrentClient(client);
+    } catch (error) {
+      console.error('Error loading mock client:', error);
+      setCurrentClient(null);
+    }
   };
 
   const mockSignOut = async () => {
@@ -111,35 +120,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setCurrentClient(client);
       } catch (error) {
         console.error('Error refreshing client:', error);
+        setCurrentClient(null);
       }
+    } else {
+      setCurrentClient(null);
     }
   };
 
   useEffect(() => {
+    let unsubscribe: (() => void) | null = null;
+
     if (firebaseConfigured && auth) {
       // Use Firebase authentication
-      const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-        if (user) {
-          const authUser: AuthUser = {
-            uid: user.uid,
-            email: user.email || '',
-            displayName: user.displayName || '',
-            photoURL: user.photoURL || undefined
-          };
-          setCurrentUser(authUser);
-          
-          // Load client data
-          try {
-            const client = await getClient(user.uid);
-            setCurrentClient(client);
-          } catch (error) {
-            console.error('Error loading client:', error);
+      unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+        try {
+          if (user) {
+            const authUser: AuthUser = {
+              uid: user.uid,
+              email: user.email || '',
+              displayName: user.displayName || '',
+              photoURL: user.photoURL || undefined
+            };
+            setCurrentUser(authUser);
+            
+            // Load client data
+            try {
+              const client = await getClient(user.uid);
+              setCurrentClient(client);
+            } catch (error) {
+              console.error('Error loading client:', error);
+              setCurrentClient(null);
+            }
+          } else {
+            setCurrentUser(null);
+            setCurrentClient(null);
           }
-        } else {
+        } catch (error) {
+          console.error('Error in auth state change:', error);
           setCurrentUser(null);
           setCurrentClient(null);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       });
 
       // Handle redirect result when user returns from Google sign-in
@@ -147,7 +169,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const result = await getRedirectResult(auth);
           if (result) {
-            // User successfully signed in via redirect
             console.log('User signed in via redirect:', result.user);
           }
         } catch (error) {
@@ -156,21 +177,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
 
       handleRedirectResult();
-
-      return unsubscribe;
     } else {
       // Use mock authentication
-      const checkMockUser = () => {
-        const mockUserData = localStorage.getItem('mockUser');
-        if (mockUserData) {
-          const mockUser = JSON.parse(mockUserData);
-          setCurrentUser(mockUser);
+      const checkMockUser = async () => {
+        try {
+          const mockUserData = localStorage.getItem('mockUser');
+          if (mockUserData) {
+            const mockUser = JSON.parse(mockUserData);
+            setCurrentUser(mockUser);
+            
+            // Try to load client data for mock user
+            try {
+              const client = await getClient(mockUser.uid);
+              setCurrentClient(client);
+            } catch (error) {
+              console.error('Error loading mock client:', error);
+              setCurrentClient(null);
+            }
+          } else {
+            setCurrentUser(null);
+            setCurrentClient(null);
+          }
+        } catch (error) {
+          console.error('Error checking mock user:', error);
+          setCurrentUser(null);
+          setCurrentClient(null);
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
       };
 
       checkMockUser();
     }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
   const value: AuthContextType = {
@@ -185,7 +229,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

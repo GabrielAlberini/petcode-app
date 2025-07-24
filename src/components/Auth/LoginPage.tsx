@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Heart, Shield, Smartphone, Globe } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const { currentUser, signInWithGoogleRedirect } = useAuth();
+  const { currentUser, signInWithGoogleRedirect, loading } = useAuth();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Show loading while authentication state is being determined
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-hope-green-50 via-white to-soft-blue-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-hope-green-500"></div>
+      </div>
+    );
+  }
 
   if (currentUser) {
     return <Navigate to="/" replace />;
@@ -14,25 +24,10 @@ const LoginPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true);
-      // Mock authentication for development
-      // Remove this and uncomment the line above when Firebase domain is configured
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
-      
-      // Create a mock user object
-      const mockUser = {
-        uid: 'mock-user-123',
-        email: 'usuario@ejemplo.com',
-        displayName: 'Usuario de Prueba',
-        photoURL: 'https://via.placeholder.com/150'
-      };
-      
-      // Store mock user in localStorage for persistence
-      localStorage.setItem('mockUser', JSON.stringify(mockUser));
-      
-      // Reload the page to trigger auth state change
-      window.location.reload();
+      await signInWithGoogleRedirect();
+      // Navigation will be handled by the auth state change
     } catch (error) {
-      console.error('Error en autenticación simulada:', error);
+      console.error('Error en autenticación:', error);
     } finally {
       setLoading(false);
     }

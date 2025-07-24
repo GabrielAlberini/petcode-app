@@ -30,6 +30,12 @@ export const createClient = async (clientData: Omit<Client, 'id'>): Promise<stri
 
 export const getClient = async (userId: string): Promise<Client | null> => {
   try {
+    // Handle case where db is null (Firebase not configured)
+    if (!db) {
+      console.warn('Firestore not available, returning null client');
+      return null;
+    }
+
     const q = query(collection(db, 'clientes'), where('userId', '==', userId));
     const querySnapshot = await getDocs(q);
 
@@ -41,7 +47,7 @@ export const getClient = async (userId: string): Promise<Client | null> => {
     return { id: doc.id, ...doc.data() } as Client;
   } catch (error) {
     console.error('Error getting client:', error);
-    throw error;
+    return null; // Return null instead of throwing to prevent crashes
   }
 };
 

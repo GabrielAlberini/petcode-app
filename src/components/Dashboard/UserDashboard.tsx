@@ -47,10 +47,14 @@ const UserDashboard: React.FC = () => {
         setOrders(ordersData);
       } catch (error) {
         console.error('Error loading dashboard data:', error);
+        // Set empty arrays on error to prevent crashes
+        setPets([]);
+        setOrders([]);
       } finally {
         setLoading(false);
       }
     };
+    
     loadData();
   }, [currentClient]);
 
