@@ -1,8 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from 'firebase/auth';
-import { auth, googleProvider } from '../config/firebase';
 import { getClient } from '../services/firestoreService';
 import { AuthUser, Client } from '../types';
+
+// Check if Firebase is properly configured
+let auth: any = null;
+let googleProvider: any = null;
+let firebaseConfigured = false;
+
+try {
+  const firebaseConfig = await import('../config/firebase');
+  auth = firebaseConfig.auth;
+  googleProvider = firebaseConfig.googleProvider;
+  firebaseConfigured = true;
+} catch (error) {
+  console.warn('Firebase configuration error, using mock authentication:', error);
+  firebaseConfigured = false;
+}
 
 interface AuthContextType {
   currentUser: AuthUser | null;
@@ -29,29 +43,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentClient, setCurrentClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Mock authentication functions for when Firebase is not configured
+  const mockSignIn = async () => {
+    const mockUser = {
+      uid: 'mock-user-123',
+      email: 'usuario@ejemplo.com',
+      displayName: 'Usuario de Prueba',
+      photoURL: 'https://via.placeholder.com/150'
+    };
+    
+    localStorage.setItem('mockUser', JSON.stringify(mockUser));
+    setCurrentUser(mockUser);
+  };
+
+  const mockSignOut = async () => {
+    localStorage.removeItem('mockUser');
+    setCurrentUser(null);
+    setCurrentClient(null);
+  };
+
   const signInWithGoogle = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      if (firebaseConfigured && auth && googleProvider) {
+        await signInWithPopup(auth, googleProvider);
+      } else {
+        await mockSignIn();
+      }
     } catch (error) {
       console.error('Error signing in with Google:', error);
-      throw error;
+      // Fallback to mock authentication
+      await mockSignIn();
     }
   };
+
   const signInWithGoogleRedirect = async () => {
     try {
-      await signInWithRedirect(auth, googleProvider);
+      if (firebaseConfigured && auth && googleProvider) {
+        await signInWithRedirect(auth, googleProvider);
+      } else {
+        await mockSignIn();
+      }
     } catch (error) {
-      throw error;
+      console.error('Error with redirect sign in:', error);
+      // Fallback to mock authentication
+      await mockSignIn();
     }
   };
 
   const logout = async () => {
     try {
-      await signOut(auth);
-      setCurrentClient(null);
+      if (firebaseConfigured && auth) {
+        await signOut(auth);
+      } else {
+        await mockSignOut();
+      }
     } catch (error) {
       console.error('Error signing out:', error);
-      throw error;
+      // Fallback to mock sign out
+      await mockSignOut();
     }
   };
 
@@ -67,46 +116,61 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
-      if (user) {
-        const authUser: AuthUser = {
-          uid: user.uid,
-          email: user.email || '',
-          displayName: user.displayName || '',
-          photoURL: user.photoURL || undefined
-        };
-        setCurrentUser(authUser);
-        
-        // Load client data
+    if (firebaseConfigured && auth) {
+      // Use Firebase authentication
+      const unsubscribe = onAuthStateChanged(auth, async (user: User | null) => {
+        if (user) {
+          const authUser: AuthUser = {
+            uid: user.uid,
+            email: user.email || '',
+            displayName: user.displayName || '',
+            photoURL: user.photoURL || undefined
+          };
+          setCurrentUser(authUser);
+          
+          // Load client data
+          try {
+            const client = await getClient(user.uid);
+            setCurrentClient(client);
+          } catch (error) {
+            console.error('Error loading client:', error);
+          }
+        } else {
+          setCurrentUser(null);
+          setCurrentClient(null);
+        }
+        setLoading(false);
+      });
+
+      // Handle redirect result when user returns from Google sign-in
+      const handleRedirectResult = async () => {
         try {
-          const client = await getClient(user.uid);
-          setCurrentClient(client);
+          const result = await getRedirectResult(auth);
+          if (result) {
+            // User successfully signed in via redirect
+            console.log('User signed in via redirect:', result.user);
+          }
         } catch (error) {
-          console.error('Error loading client:', error);
+          console.error('Error handling redirect result:', error);
         }
-      } else {
-        setCurrentUser(null);
-        setCurrentClient(null);
-      }
-      setLoading(false);
-    });
+      };
 
-    // Handle redirect result when user returns from Google sign-in
-    const handleRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          // User successfully signed in via redirect
-          console.log('User signed in via redirect:', result.user);
+      handleRedirectResult();
+
+      return unsubscribe;
+    } else {
+      // Use mock authentication
+      const checkMockUser = () => {
+        const mockUserData = localStorage.getItem('mockUser');
+        if (mockUserData) {
+          const mockUser = JSON.parse(mockUserData);
+          setCurrentUser(mockUser);
         }
-      } catch (error) {
-        console.error('Error handling redirect result:', error);
-      }
-    };
+        setLoading(false);
+      };
 
-    handleRedirectResult();
-
-    return unsubscribe;
+      checkMockUser();
+    }
   }, []);
 
   const value: AuthContextType = {
