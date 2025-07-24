@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, ExternalLink, Edit, QrCode, Heart, Phone, Save, X, Package, Truck, CheckCircle, XCircle, Clock, AlertTriangle, Search, Megaphone, MapPin, Menu, User, LogOut, Shield } from 'lucide-react';
+import { Plus, ExternalLink, Edit, QrCode, Heart, Phone, Save, X, Package, Truck, CheckCircle, XCircle, Clock, AlertTriangle, Search, Megaphone, MapPin, Menu, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getClientPets, getClientOrders, updateOrderAddress, togglePetLostStatus, updatePetProfile } from '../../services/firestoreService';
 import { getStatusColor, getStatusText, formatDate } from '../../utils/profileUtils';
@@ -223,14 +223,6 @@ const UserDashboard: React.FC = () => {
                 </Link>
               )}
 
-              <Link
-                to="/perfil"
-                className="flex items-center space-x-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors touch-manipulation"
-                onClick={() => setShowMenu(false)}
-              >
-                <User className="h-5 w-5" />
-                <span className="font-medium">Mi Perfil</span>
-              </Link>
 
               <div className="px-3 py-3 border-t border-gray-200 mt-2">
                 <div className="text-sm mb-3">
