@@ -349,6 +349,11 @@ export const updateOrderStatus = async (orderId: string, status: QROrder['status
 
 export const updateOrderAddress = async (orderId: string, address: string, city: string, postalCode: string, country: string): Promise<void> => {
   try {
+    if (!db) {
+      console.warn('Firestore not available, cannot update order address');
+      return;
+    }
+    
     const orderRef = doc(db, 'pedidosQR', orderId);
     await updateDoc(orderRef, {
       clientAddress: address,

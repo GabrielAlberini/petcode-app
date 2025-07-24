@@ -48,13 +48,6 @@ const Header: React.FC = () => {
                 </Link>
               )}
 
-              <Link
-                to="/perfil"
-                className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-hope-green-600 hover:bg-gray-50 transition-colors"
-              >
-                <User className="h-4 w-4" />
-                <span>Perfil</span>
-              </Link>
 
               <div className="flex items-center space-x-3 pl-3 border-l border-gray-200">
                 <div className="text-sm">
@@ -105,14 +98,6 @@ const Header: React.FC = () => {
                 </Link>
               )}
 
-              <Link
-                to="/perfil"
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-hope-green-600 hover:bg-gray-50 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <User className="h-4 w-4" />
-                <span>Perfil</span>
-              </Link>
 
               <div className="px-3 py-2 border-t border-gray-200 mt-2">
                 <div className="text-sm mb-2">

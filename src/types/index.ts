@@ -39,10 +39,10 @@ export interface QROrder {
   clientEmail: string;
   clientFirstName: string;
   clientLastName: string;
-  clientAddress: string;
-  clientCity: string;
-  clientPostalCode: string;
-  clientCountry: string;
+  clientAddress?: string;
+  clientCity?: string;
+  clientPostalCode?: string;
+  clientCountry?: string;
   clientPhone: string;
   petName: string;
   profileUrl: string;

@@ -164,35 +164,43 @@ const PublicProfilePage: React.FC = () => {
           </div>
 
           {/* Información de Contacto */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <User className="h-5 w-5 text-blue-500 mr-2" />
+              Información de Contacto
+            </h3>
+            <div className="space-y-2">
+              <div className="flex justify-between py-2 border-b border-gray-100">
+                <span className="text-gray-600">Dueño:</span>
+                <span className="font-medium">{profile.ownerName}</span>
+              </div>
+              <div className="flex justify-between py-2">
+                <span className="text-gray-600">Teléfono:</span>
+                <span className="font-medium">{profile.contactPhone}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Botón de Llamada */}
+          <button
+            onClick={handleCall}
+            className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg touch-manipulation"
+          >
+            <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
+            <span>Llamar al Dueño</span>
+          </button>
+
+          {/* Mensaje especial si está perdida */}
           {profile.isLost && (
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                <User className="h-5 w-5 text-blue-500 mr-2" />
-                Información de Contacto
-              </h3>
-              <div className="space-y-2">
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Dueño:</span>
-                  <span className="font-medium">{profile.ownerName}</span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-600">Teléfono:</span>
-                  <span className="font-medium">{profile.contactPhone}</span>
-                </div>
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                <AlertTriangle className="h-6 w-6 text-red-500 mx-auto mb-2" />
+                <p className="text-red-700 font-semibold">¡Esta mascota está perdida!</p>
+                <p className="text-red-600 text-sm">Por favor contacta inmediatamente al dueño</p>
               </div>
             </div>
           )}
 
-          {/* Botón de Llamada */}
-          {profile.isLost && (
-            <button
-              onClick={handleCall}
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-xl text-base sm:text-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg touch-manipulation"
-            >
-              <Phone className="h-5 w-5 sm:h-6 sm:w-6" />
-              <span>Llamar al Dueño</span>
-            </button>
-          )}
         </div>
 
         {/* Footer */}

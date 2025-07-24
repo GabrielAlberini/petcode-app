@@ -116,23 +116,6 @@ const PetProfileForm: React.FC = () => {
 
       const petId = await createPetProfile(petData);
 
-      await createQROrder({
-        clientId: currentClient.id,
-        petProfileId: petId,
-        clientEmail: currentClient.email,
-        clientFirstName: currentClient.firstName,
-        clientLastName: currentClient.lastName,
-        clientAddress: currentClient.address,
-        clientCity: currentClient.city,
-        clientPostalCode: currentClient.postalCode,
-        clientCountry: currentClient.country,
-        clientPhone: currentClient.phone,
-        petName: data.petName,
-        profileUrl,
-        status: 'pendiente',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      });
 
       navigate('/');
     } catch (error) {
